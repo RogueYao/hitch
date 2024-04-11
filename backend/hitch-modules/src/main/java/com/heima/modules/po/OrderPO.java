@@ -49,9 +49,9 @@ public class OrderPO implements Serializable, PO {
 
 
     /**
-     * 未支付：0
-     * 已支付：1
-     * 未确认：2
+     * 新创建：0
+     * 待支付：1
+     * 已支付：2
      * 订单状态
      */
     private Integer status;
