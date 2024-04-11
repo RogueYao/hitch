@@ -154,9 +154,8 @@ public class StrokeHandler {
         // 0 = 未确认， 1 = 已确认 ， 2= 已拒绝
         redisHelper.addHash(HtichConstants.STROKE_INVITE_PREFIX, inviteeTripId, inviterTripId, String.valueOf(InviteState.UNCONFIRMED.getCode()));
         redisHelper.addHash(HtichConstants.STROKE_INVITE_PREFIX, inviterTripId, inviteeTripId, String.valueOf(InviteState.UNCONFIRMED.getCode()));
-        //TODO:任务4.4-邀请后发送延迟消息-2day
         //发送延时消息
-        mqProducer.sendOver(JSON.toJSONString(strokeVO));
+        mqProducer.sendOver(strokeVO);
 
 
         quickConfirm(strokeVO);

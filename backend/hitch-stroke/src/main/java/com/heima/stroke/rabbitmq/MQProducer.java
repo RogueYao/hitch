@@ -1,6 +1,8 @@
 package com.heima.stroke.rabbitmq;
 
 
+import com.alibaba.fastjson.JSON;
+import com.heima.modules.vo.StrokeVO;
 import com.heima.stroke.configuration.RabbitConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,10 +20,10 @@ public class MQProducer {
     /**
      * 发送延时订单MQ
      *
-     * @param mqMessage
+     * @param strokeVO
      */
-    public void sendOver(String mqMessage) {
-
+    public void sendOver(StrokeVO strokeVO) {
+        String mqMessage = JSON.toJSONString(strokeVO);
         logger.info("send timeout msg:{}",mqMessage);
         rabbitTemplate.convertAndSend(RabbitConfig.STROKE_OVER_QUEUE_EXCHANGE, RabbitConfig.STROKE_OVER_KEY, mqMessage);
     }
