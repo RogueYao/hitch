@@ -1,6 +1,5 @@
 package com.heima.stroke.handler.valuation;
 
-//TODO:【allinone】任务3.3-使用装饰者模式，完成路径计费
 public interface Valuation {
 
     float calculation(float km);

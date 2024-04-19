@@ -81,13 +81,26 @@ public class AccountHandler {
     public ResponseVO<AccountVO> modifyPassword(AccountVO accountVO) {
         //获取当前登录用户的id
         String userid = accountVO.getCurrentUserId();
-        //TODO:【allinone】任务1-修改密码-1day
+        //TODO:任务1-修改密码-1day
         //获取当前用户在数据库里的信息
         //旧密码加密，对比数据库，防止输入错误
         //新密码加密，对比旧密码，不允许相同
         //校验通过，将新密码写入数据库，修改成功
 
-
+        if (StringUtils.isAnyEmpty(accountVO.getPassword(), accountVO.getNewPassword())) {
+            throw new BusinessRuntimeException(BusinessErrors.DATA_NOT_EXIST, "新老密码不允许为空");
+        }
+        AccountPO accountPO = accountAPIService.getAccountByID(userid);
+        if (null == accountPO) {
+            throw new BusinessRuntimeException(BusinessErrors.DATA_NOT_EXIST, "用户信息不存在");
+        }
+        String oldPassword = CommonsUtils.encodeMD5(accountVO.getPassword());
+        String newPassword = CommonsUtils.encodeMD5(accountVO.getNewPassword());
+        if (!oldPassword.equals(accountPO.getPassword())) {
+            throw new BusinessRuntimeException(BusinessErrors.AUTHENTICATION_ERROR, "旧密码输入错误");
+        }
+        accountPO.setPassword(newPassword);
+        accountAPIService.update(accountPO);
         return ResponseVO.success(null, "修改密码成功");
     }
 
@@ -183,7 +196,7 @@ public class AccountHandler {
             throw new BusinessRuntimeException(BusinessErrors.DATA_NOT_EXIST, "身份证正面照片不存在");
         }
 
-        //TODO:【allinone】任务2.2-个人实名认证（选做）
+        //TODO:任务2.2-个人实名认证（选做）
         //【可选作业】：调百度完成身份证识别，将识别信息更新到数据库对应字段
         //文档（身份证识别）：https://cloud.baidu.com/doc/OCR/s/rk3h7xzck
         //文档（h5人脸实名认证接口）：https://ai.baidu.com/ai-doc/FACE/skxie72kp
@@ -244,7 +257,7 @@ public class AccountHandler {
         AccountPO accountPO = getCurrentAccountPO();
         VehiclePO vehiclePO = getVehiclePO(accountPO);
         try {
-            //TODO:【allinone】任务2.1-车辆信息验证入口-2day
+            //TODO:任务2.1-车辆信息验证-2day
             String license = aiHelper.getLicense(vehiclePO);
             vehiclePO.setCarNumber(license);
             accountPO.setRole(1);
@@ -316,7 +329,7 @@ public class AccountHandler {
         }
         //验证密码
         if (!CommonsUtils.encodeMD5(accountVO.getPassword()).equals(accountPO.getPassword())) {
-            logger.warn("password error! account="+accountPO.getUseralias());
+            logger.warn("password error! account=" + accountPO.getUseralias());
             throw new BusinessRuntimeException(BusinessErrors.PARAM_CANNOT_EMPTY, "用户名或者密码错误");
         }
         return (AccountVO) CommonsUtils.toVO(accountPO);
