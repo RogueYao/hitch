@@ -27,7 +27,7 @@ public class ScheduledTask {
 
     @PostConstruct
     public void init() {
-        //TODO:任务5.2-推送未读消息
+        //TODO:【allinone】任务5.2-推送未读消息
         //定时调度，获取mongodb里的未读消息，推送给对应用户
         executorService.scheduleAtFixedRate(() -> {
             //获取所有在线的用户accountId，提示：WebSocketServer里有用户链接的池子

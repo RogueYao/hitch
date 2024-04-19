@@ -407,7 +407,7 @@ public class StrokeHandler {
         OrderPO orderPO = new OrderPO();
         orderPO.setId(CommonsUtils.getWorkerID());//雪花算法主键序列
         orderPO.setStatus(0);//初始状态：未支付
-        //TODO:任务3.1-生成订单-3day
+        //TODO:【allinone】任务3.1-生成订单-3day
 
         //注意传入的两个参数，包含了下面想要的信息：
 

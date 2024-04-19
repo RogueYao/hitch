@@ -15,7 +15,7 @@ public class BaiduMapClient {
 
     private final static Logger logger = LoggerFactory.getLogger(BaiduMapClient.class);
 
-    //TODO:任务3.2-调百度路径计算两点间的距离，和预估抵达时长
+    //TODO:【allinone】任务3.2-调百度路径计算两点间的距离，和预估抵达时长
     public RoutePlanResultBO pathPlanning(String origins, String destinations) {
 
         return null;
