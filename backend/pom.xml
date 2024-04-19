@@ -29,16 +29,6 @@
     <packaging>pom</packaging>
 
     <properties>
-
-        <!--harbor 仓库地址-->
-        <docker.registry.url>manager-hongbaoyu-java.itheima.net:8443</docker.registry.url>
-        <!--harbor 的项目名称-->
-        <docker.registry.name>library</docker.registry.name>
-        <!--harbor账号-->
-        <docker.registry.username>itcast</docker.registry.username>
-        <!--harbor密码-->
-        <docker.registry.password>Qwert123</docker.registry.password>
-
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
