@@ -48,6 +48,7 @@
         })
         function logout() {
             localStorage.clear();
+            //localStorage.removeItem('SESSION_TOKEN_KEY'); //退出不清空其他信息，那么其他人登录会串，但是能保留聊天数据等信息
             toUrl('/web/login.html');
         }
     </script>
