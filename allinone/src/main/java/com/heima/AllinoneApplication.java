@@ -7,6 +7,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Import;
+import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
 @EnableRequestInital
@@ -14,7 +16,8 @@ import org.springframework.context.annotation.Import;
 @Import(SpringUtil.class)
 //开启缓存注解
 @EnableCaching
-
+@EnableTransactionManagement
+@EnableRedisHttpSession(maxInactiveIntervalInSeconds = -1)
 public class AllinoneApplication {
     public static void main(String[] args) {
         SpringApplication.run(AllinoneApplication.class, args);

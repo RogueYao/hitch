@@ -6,24 +6,25 @@ import com.heima.commons.constant.HtichConstants;
 import com.heima.commons.domin.vo.response.ResponseVO;
 import com.heima.commons.entity.SessionContext;
 import com.heima.commons.enums.BusinessErrors;
-import com.heima.commons.helper.RedisSessionHelper;
 import com.heima.commons.utils.SpringUtil;
+import com.heima.modules.po.StrokePO;
 import com.heima.modules.vo.NoticeVO;
 import com.heima.notice.handler.NoticeHandler;
+import com.heima.storage.service.StrokeAPIService;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 //TODO:任务5.1-完成websocket开发-2
 @Component
-@ServerEndpoint(value = "/ws/socket")
+@ServerEndpoint(value = "/notice/ws/socket")
 public class WebSocketServer {
 
 
@@ -105,22 +106,9 @@ public class WebSocketServer {
     * 在当前session中获取用户accoutId
     * */
     private String getAccountId(Session session) {
-        String token = null;
-        Map<String, List<String>> paramMap = session.getRequestParameterMap();
-        List<String> paramList = paramMap.get(HtichConstants.SESSION_TOKEN_KEY);
-        if (paramList!=null && paramList.size() != 0){
-            token = paramList.get(0);
-        }
-        RedisSessionHelper redisSessionHelper = SpringUtil.getBean(RedisSessionHelper.class);
-        if (null == redisSessionHelper) {
-            return null;
-        }
-        SessionContext context = redisSessionHelper.getSession(token);
-        boolean isisValid = redisSessionHelper.isValid(context);
-        if (isisValid) {
-            return context.getAccountID();
-        }
-        return null;
+        Map<String,List<String>> map = session.getRequestParameterMap();
+        List<String> tokens = map.get("SESSION_TOKEN_KEY");
+        return tokens == null ? null : tokens.get(0);
     }
 
 }

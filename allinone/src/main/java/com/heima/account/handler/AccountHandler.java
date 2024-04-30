@@ -1,11 +1,8 @@
 package com.heima.account.handler;
 
 import com.heima.commons.domin.vo.response.ResponseVO;
-import com.heima.commons.entity.SessionContext;
 import com.heima.commons.enums.BusinessErrors;
 import com.heima.commons.exception.BusinessRuntimeException;
-import com.heima.commons.helper.RedisSessionHelper;
-import com.heima.commons.template.SessionTemplate;
 import com.heima.commons.utils.CommonsUtils;
 import com.heima.commons.utils.RequestUtils;
 import com.heima.commons.utils.SnowflakeIdWorker;
@@ -28,12 +25,6 @@ import org.springframework.stereotype.Component;
 public class AccountHandler {
     private final static Logger logger = LoggerFactory.getLogger(AccountHandler.class);
     private SnowflakeIdWorker idWorker = new SnowflakeIdWorker(0, 0);
-
-    @Autowired
-    private RedisSessionHelper redisSessionHelper;
-
-    @Autowired
-    private SessionTemplate sessionTemplate;
 
     @Autowired
     private AccountAPIService accountAPIService;
@@ -193,8 +184,8 @@ public class AccountHandler {
         //真实业务需要设置Account用户真实姓名，这里直接用用户名
         accountPO.setUseralias(accountPO.getUsername());
         accountPO.setStatus(1); //状态改成已认证
-        //更新Redis缓存
-        sessionTemplate.updateSessionUseralias(accountPO.getId(), accountPO.getUseralias());
+        //更新缓存信息
+        RequestUtils.getRequest().getSession().setAttribute("user",CommonsUtils.toVO(accountPO));
         accountAPIService.update(accountPO);
         authenticationAPIService.update(authenticationPO);
         return ResponseVO.success(authenticationPO);

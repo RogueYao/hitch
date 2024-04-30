@@ -9,9 +9,10 @@ import com.heima.commons.initial.annotation.InitialResolver;
 import com.heima.modules.po.AccountPO;
 
 import javax.validation.constraints.NotEmpty;
+import java.io.Serializable;
 import java.util.Date;
 
-public class AccountVO implements VO {
+public class AccountVO implements VO, Serializable {
 
     /**
      * 主键

@@ -1,10 +1,6 @@
 package com.heima.commons.initial.filter;
 
-import com.heima.commons.constant.HtichConstants;
-import com.heima.commons.entity.SessionContext;
-import com.heima.commons.helper.RedisSessionHelper;
 import com.heima.modules.vo.AccountVO;
-import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +11,6 @@ import org.springframework.stereotype.Component;
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.annotation.WebInitParam;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -37,8 +32,6 @@ public class TokenAuthFilter implements Filter {
             "/payment/api/nofify"
     );
 
-    @Autowired
-    private RedisSessionHelper redisSessionHelper;
 
     @Override
     public void doFilter(ServletRequest servletRequest0, ServletResponse servletResponse0, FilterChain filterChain) throws IOException, ServletException {

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heima.commons.entity.SessionContext;
-import com.heima.commons.helper.RedisSessionHelper;
 import com.heima.commons.utils.RedisHelper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,10 +38,6 @@ public class RedisConfiguration {
         return redisTemplate;
     }
 
-    @Bean
-    public RedisSessionHelper redisSessionHelper() {
-        return new RedisSessionHelper();
-    }
 
     @Bean
     public RedisHelper redisHelper() {

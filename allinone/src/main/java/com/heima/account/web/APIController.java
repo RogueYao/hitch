@@ -46,6 +46,7 @@ public class APIController {
     @PostMapping("/login")
     public ResponseVO<AccountVO> login(@Validated(Group.Select.class) @RequestBody AccountVO accountVO, HttpServletRequest request) {
         AccountVO vo = accountHandler.verifyAccountLogin(accountVO);
+        vo.setToken(vo.getId());
         request.getSession().setAttribute("user",vo);
         return ResponseVO.success(vo);
     }
@@ -101,9 +102,18 @@ public class APIController {
     @ApiOperation(value = "验证Token", tags = {"账户管理"})
     @PostMapping("/verifyToken")
     public ResponseVO verifyToken(HttpServletRequest request) {
+        //主动在个人中心退出登录会清空客户端token，拿到null
+        String token = request.getHeader(HtichConstants.SESSION_TOKEN_KEY);
+        if (token == null || "null".equals(token)){
+            //同步清理掉redis session
+            request.getSession().invalidate();
+            throw new BusinessRuntimeException(BusinessErrors.DATA_NOT_EXIST);
+        }
         AccountVO vo = (AccountVO) request.getSession().getAttribute("user");
         if (vo == null){
-            throw new BusinessRuntimeException(BusinessErrors.DATA_NOT_EXIST);
+            throw new BusinessRuntimeException(BusinessErrors.DATA_STATUS_ERROR);
+        } else if (!vo.getId().equals(token)) {
+            throw new BusinessRuntimeException(BusinessErrors.AUTHENTICATION_ERROR);
         }
         return ResponseVO.success(CommonsUtils.toPO(vo));
     }
