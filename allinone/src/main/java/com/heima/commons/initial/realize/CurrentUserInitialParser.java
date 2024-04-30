@@ -14,6 +14,6 @@ public class CurrentUserInitialParser implements InitialParser {
 
     @Override
     public Object getDefaultValue(Class clazz, InitialResolver initialResolver) {
-        return RequestUtils.getRequestHeaderOrCookie(HtichConstants.HEADER_ACCOUNT_KEY);
+        return RequestUtils.getCurrentUserId();
     }
 }

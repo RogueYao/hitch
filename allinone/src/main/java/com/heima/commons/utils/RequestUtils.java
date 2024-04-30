@@ -1,6 +1,7 @@
 package com.heima.commons.utils;
 
 import com.heima.commons.constant.HtichConstants;
+import com.heima.modules.vo.AccountVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -21,33 +22,15 @@ public class RequestUtils {
     }
 
     /**
-     * 获取Head中的数据
-     *
-     * @param headerName
-     * @return
-     */
-    public static String getRequestHeaderOrCookie(String headerName) {
-        HttpServletRequest request = getRequest();
-        String v = request.getHeader(headerName);
-        if (StringUtils.isEmpty(v)){
-            Cookie[] cookies = request.getCookies();
-            for (Cookie cookie : cookies) {
-                if (headerName.equals(cookie.getName())){
-                    v = cookie.getValue();
-                    break;
-                }
-            }
-        }
-        return v;
-    }
-
-    /**
      * 获取当前用户信息
      *
      * @return
      */
     public static String getCurrentUserId() {
-        return getRequestHeaderOrCookie(HtichConstants.HEADER_ACCOUNT_KEY);
+        HttpServletRequest request = getRequest();
+        AccountVO vo = (AccountVO) request.getSession().getAttribute("user");
+        if (vo == null) return null;
+        return vo.getId();
     }
 
 }

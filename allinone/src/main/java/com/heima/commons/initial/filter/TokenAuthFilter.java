@@ -3,6 +3,8 @@ package com.heima.commons.initial.filter;
 import com.heima.commons.constant.HtichConstants;
 import com.heima.commons.entity.SessionContext;
 import com.heima.commons.helper.RedisSessionHelper;
+import com.heima.modules.vo.AccountVO;
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,10 +34,7 @@ public class TokenAuthFilter implements Filter {
     final List<String> path = Arrays.asList(
             "/account/api/login",
             "/account/api/register",
-            "/payment/api/nofify",
-            "/doc.html",
-            "/swagger-resources",
-            "/v2/api-docs"
+            "/payment/api/nofify"
     );
 
     @Autowired
@@ -46,35 +45,23 @@ public class TokenAuthFilter implements Filter {
         // 获取request和response，注意：不是HttpServletRequest及HttpServletResponse
         HttpServletRequest request = (HttpServletRequest) servletRequest0;
         HttpServletResponse response = (HttpServletResponse) servletResponse0;
-        String sessionToken = getSessionToken(request);
-        logger.info("===> sessionToken : {} , request path : {}",sessionToken,request.getServletPath());
+        AccountVO vo = (AccountVO) request.getSession().getAttribute("user");
+        logger.info("===> sessionToken : {} , request path : {}",vo,request.getServletPath());
         //验证放行路径
-        if (path.contains(request.getServletPath())) {
+        if (path.contains(request.getServletPath())
+                || !StringUtils.contains(request.getServletPath(),"/api/")) {
             // 认证通过放行
             filterChain.doFilter(servletRequest0,servletResponse0);
             return;
         }
         //非空判断
-        if (StringUtils.isEmpty(sessionToken)) {
+        if (vo == null) {
             // 响应未认证！
             printError(response);
             // 结束请求
             return ;
 
         }
-        SessionContext context = redisSessionHelper.getSession(sessionToken);
-        boolean isisValid = redisSessionHelper.isValid(context);
-        //session已经失效
-        if (!isisValid) {
-            // 响应未认证！
-            printError(response);
-            // 结束请求
-            return;
-        }
-        String accountID = context.getAccountID();
-//        response.setHeader(HtichConstants.HEADER_ACCOUNT_KEY, accountID);
-        response.addCookie(new Cookie(HtichConstants.HEADER_ACCOUNT_KEY,accountID));
-
         // 认证通过放行
         filterChain.doFilter(request,response);
     }
@@ -110,20 +97,6 @@ public class TokenAuthFilter implements Filter {
         public String[] getPathArray() {
             return pathArray;
         }
-    }
-
-    /**
-     * 获取Token信息
-     *
-     * @param request
-     * @return
-     */
-    private static String getSessionToken(HttpServletRequest request) {
-        String sessionToken = request.getHeader(HtichConstants.SESSION_TOKEN_KEY);
-        if (StringUtils.isEmpty(sessionToken)) {
-            sessionToken = request.getParameter(HtichConstants.SESSION_TOKEN_KEY);
-        }
-        return sessionToken;
     }
 
 

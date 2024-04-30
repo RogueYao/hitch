@@ -123,19 +123,6 @@ public class AccountHandler {
 
 
     /**
-     * 生成Token
-     *
-     * @param accountVO
-     * @return
-     */
-    public ResponseVO accountLogin(AccountVO accountVO) {
-        AccountVO vo = verifyAccountLogin(accountVO);
-        SessionContext sessionContext = redisSessionHelper.createSession(vo, vo.getId(), vo.getUsername(), vo.getUseralias(), null);
-        vo.setToken(sessionContext.getSessionID());
-        return ResponseVO.success(vo);
-    }
-
-    /**
      * 获取用户基本信息
      *
      * @param
@@ -312,7 +299,7 @@ public class AccountHandler {
      * @param accountVO
      * @return
      */
-    private AccountVO verifyAccountLogin(AccountVO accountVO) {
+    public AccountVO verifyAccountLogin(AccountVO accountVO) {
         //用户或者手机号不能为空
         if (StringUtils.isAllEmpty(accountVO.getUsername(), accountVO.getPhone())) {
             throw new BusinessRuntimeException(BusinessErrors.PARAM_CANNOT_EMPTY);
@@ -335,26 +322,5 @@ public class AccountHandler {
         return (AccountVO) CommonsUtils.toVO(accountPO);
     }
 
-    /**
-     * 验证Token
-     *
-     * @param sessionID
-     * @return
-     */
-    public ResponseVO verifyToken(String sessionID) {
-        SessionContext sessionContext = redisSessionHelper.getSession(sessionID);
-        if (null == sessionContext) {
-            throw new BusinessRuntimeException(BusinessErrors.TOKEN_IS_INVALID);
-        }
-        if (StringUtils.isEmpty(sessionContext.getAccountID())) {
-            throw new BusinessRuntimeException(BusinessErrors.TOKEN_IS_INVALID);
-        }
-        AccountPO accountPO = accountAPIService.getAccountByID(sessionContext.getAccountID());
-        if (null == accountPO) {
-            throw new BusinessRuntimeException(BusinessErrors.DATA_NOT_EXIST);
-        }
-
-        return ResponseVO.success(accountPO);
-    }
 
 }

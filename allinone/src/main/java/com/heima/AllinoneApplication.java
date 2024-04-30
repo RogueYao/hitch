@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Import;
 @Import(SpringUtil.class)
 //开启缓存注解
 @EnableCaching
+
 public class AllinoneApplication {
     public static void main(String[] args) {
         SpringApplication.run(AllinoneApplication.class, args);
