@@ -18,6 +18,7 @@ import com.heima.storage.service.VehicleAPIService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -102,13 +103,14 @@ public class AccountHandler {
      * @return
      */
     public ResponseVO<AccountVO> modify(AccountVO accountVO) {
-        AccountPO accountPO = accountAPIService.getAccountByID(accountVO.getCurrentUserId());
-        if (null == accountPO) {
+        String accountId = accountVO.getCurrentUserId();
+        if (null == accountId) {
             throw new BusinessRuntimeException(BusinessErrors.DATA_NOT_EXIST, "用户信息不存在");
         }
         AccountPO po = CommonsUtils.toPO(accountVO);
-        po.setId(accountPO.getId());
+        po.setId(accountId);
         accountAPIService.update(po);
+        RequestUtils.refreshSessionUser();
         return ResponseVO.success(null, "修改用户信息成功");
     }
 
@@ -185,7 +187,7 @@ public class AccountHandler {
         accountPO.setUseralias(accountPO.getUsername());
         accountPO.setStatus(1); //状态改成已认证
         //更新缓存信息
-        RequestUtils.getRequest().getSession().setAttribute("user",CommonsUtils.toVO(accountPO));
+        RequestUtils.refreshSessionUser();
         accountAPIService.update(accountPO);
         authenticationAPIService.update(authenticationPO);
         return ResponseVO.success(authenticationPO);
@@ -241,6 +243,7 @@ public class AccountHandler {
             accountPO.setRole(1);
             accountAPIService.update(accountPO);
             vehicleAPIService.update(vehiclePO);
+            RequestUtils.refreshSessionUser();
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseVO.error(e.getMessage());

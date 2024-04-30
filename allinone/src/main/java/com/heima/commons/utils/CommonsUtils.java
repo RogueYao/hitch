@@ -4,6 +4,7 @@ package com.heima.commons.utils;
 import com.heima.commons.domin.po.PO;
 import com.heima.commons.domin.vo.VO;
 import com.heima.commons.utils.reflect.ReflectUtils;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
