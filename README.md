@@ -1,54 +1,34 @@
-# 黑马顺风车
 
-## 测试环境接口：
+## 一键部署与启动
 
-###  服务网关： 
+## 1、把代码上传到一台服务器
 
- http://116.62.213.90:10010
+确保服务器安装了maven 、docker 、docker-compose
 
-###  注册中心： 
+修改deploy下的docker-compose.yml里的配置，主要涉及以下几个：（其他不必动）
 
- http://116.62.213.90:10011/nacos
-
-###  harbor
- https://manager-hongbaoyu-java.itheima.net:8443/harbor/projects
- 
+![image-20240510191150028](README.assets/image-20240510191150028.png)
 
 
-###  行程中心-12： 
 
- http://116.62.213.90:10012/stroke/doc.html#/home
+## 2、到  allinone 下执行
 
-###  存储中心-1： 
+mvn package docker:build
 
- http://116.62.213.90:10013/storage/doc.html#/home
 
-###  支付中心-9： 
 
- http://116.62.213.90:10014/payment/doc.html#/home
+## 3、到deploy下执行
 
-###  订单中心-4： 
+docker-compose up -d
 
- http://116.62.213.90:10015/order/doc.html#/home
 
-###  消息中心-1： 
 
- http://116.62.213.90:10016/notice/doc.html#/home
+## 启动后的一些配置：
 
-###  用户中心-12： 
+![image-20240510190608861](README.assets/image-20240510190608861.png)
 
- http://116.62.213.90:10017/account/doc.html#/home
 
-## total:
 
-### 接口:
+各服务端口号：
 
-39
-
-### 代码:
-
-顺风车
-added lines: 33070, removed lines: 10804, total lines: 22266
-
-total with opencv demo
-added lines: 478179, removed lines: 10814, total lines: 467365
+![image-20240510190843129](README.assets/image-20240510190843129.png)
