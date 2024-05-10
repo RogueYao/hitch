@@ -83,7 +83,7 @@ services:
       spring.datasource.druid.master.url: jdbc:mysql://hitch-onekey-mysql/hitch?useUnicode=true&characterEncoding=utf-8
       spring.datasource.druid.master.username: root
       spring.datasource.druid.master.password: root
-      minio.url: http://116.62.213.90:9205
+      minio.url: http://192.168.64.100:9205
       minio.host: hitch-onekey-minio
       minio.port: 9000
       minio.bucket: hitch
