@@ -80,9 +80,9 @@ services:
       - hitch-onekey-minio
     environment:
       server.port: 8080
-      spring.datasource.druid.master.url: jdbc:mysql://hitch-onekey-mysql/hitch?useUnicode=true&characterEncoding=utf-8
-      spring.datasource.druid.master.username: root
-      spring.datasource.druid.master.password: root
+      spring.datasource.url: jdbc:mysql://hitch-onekey-mysql/hitch?useUnicode=true&characterEncoding=utf-8
+      spring.datasource.username: root
+      spring.datasource.password: root
       minio.url: http://192.168.64.100:9205
       minio.host: hitch-onekey-minio
       minio.port: 9000
