@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>黑马顺风车</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../css/jquery.mobile-1.4.5.min.css">
+    <script src="../js/jquery-1.11.3.min.js"></script>
+    <script src="../js/jquery.mobile-1.4.5.min.js"></script>
+    <link rel="stylesheet" href="../css/common.css" />
+    <script type="text/javascript" src="../js/common.js"></script>
+    <style>
+        html,
+        body {
+            padding: 0;
+            margin: 0;
+        }
+
+        table .h {
+            width: 100px;
+            height: 35px;
+            font-weight: bold;
+        }
+
+        img {
+            width: 100%;
+            height: 100%;
+            max-height: 180px;
+        }
+
+        .p {
+            height: 30px;
+            line-height: 25px;
+        }
+    </style>
+    <script>
+        $(function () {
+            $.post('/order/api/paidList', '{}', function (d) {
+                var a = 0;
+                var b = 0;
+                var c = 0;
+                d.data.forEach(e => {
+                    // console.log(e);
+                    e.createdTime = transDate(e.createdTime);
+                    if (e.passengerId == current_user.id) {
+                        //我乘坐的
+                        a++;
+
+                        e.role = '乘客'
+                        e.cost = '￥-' + e.cost
+                    } else {
+                        //乘坐我的
+                        if(e.status == 2){
+                            c += e.cost;
+                        }
+                        b++;
+
+                        e.role = '车主';
+                        e.cost = '￥+' + e.cost
+                    }
+                    e.status = (e.status == 1 ? '【未支付】':'');
+                    renderByTemplate('#listTab', '#template', e);
+                });
+                $('#a').text(a + '次');
+                $('#b').text(b + '次');
+                $('#c').text('￥' + Math.round(c * 100) / 100);
+                // $("#defaultpanel").listview('refresh');
+            });
+
+            $('.person-img').attr('src', current_user.avatar);
+            $('#driverName').text((current_user.useralias == '') ? current_user.username : current_user.useralias);
+
+            $('li').removeClass('ui-first-child');
+
+            var roleName = (localStorage.getItem('current_role') == '0' ? 'user' : 'driver');
+            $('.role').each(function () {
+                $(this).attr('href', '../' + roleName + '/' + $(this).attr('href'));
+            });
+
+
+
+        })
+
+
+    </script>
+</head>
+
+<body>
+
+    <div data-role="page" id="pageone">
+        <div data-role="header" data-position="fixed" data-tap-toggle="false">
+            <a href="#" data-rel="back"
+                class="ui-btn ui-btn-inline ui-icon-arrow-l ui-btn-icon-notext ui-corner-all">使用圆圈（默认）</a>
+            <h1>行程统计</h1>
+        </div>
+        <ul data-role="listview" data-inset="true" id="defaultpanel" style="margin:15px;">
+            <li>
+                <a href="#" class="ui-btn"
+                    style="border-top-left-radius: 5px; border-top-right-radius: 5px; background-color:#ddd;">
+                    <img class="person-img" src="" style="width:70px;height:70px;margin-top:25px;margin-left:10px;">
+                    <h2 id="driverName">王小猫</h2>
+                    <p><span>打车次数：</span><span style="color:darkgoldenrod" id="a"></span></p>
+                    <p><span>载客次数：</span><span style="color:darkgoldenrod" id="b"></span></p>
+                    <p><span>收支统计：</span> <span style="color:darkgoldenrod" id="c"></span></p>
+                </a>
+            </li>
+            <li>
+                <div id="listTab">
+
+                </div>
+            </li>
+        </ul>
+        <div id="template" style="display:none;">
+            <p class="p"><b>【{role}】{createdTime}</b>&nbsp;&nbsp;<span style="color: darkgoldenrod;">{cost}</span>&nbsp;&nbsp;<span style="color: crimson;">{status}</span></p>
+        </div>
+        <div data-role="footer" data-position="fixed" data-tap-toggle="false">
+            <div data-role="navbar" style="margin: 0;" id="footerLink">
+                <ul>
+                    <li><a href="user.html" data-ajax="false" data-icon="home" class="role">首页</a></li>
+                    <li><a href="trip.html" data-ajax="false" data-icon="grid" class="role">我的行程</a></li>
+                    <li><a href="order.html" data-ajax="false" data-icon="bullets" class="role">我的订单</a></li>
+                    <li><a href="userCenter.html" data-ajax="false" data-icon="user" class="ui-btn-active">个人中心</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

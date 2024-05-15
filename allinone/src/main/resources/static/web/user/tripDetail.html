@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>黑马顺风车</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../css/jquery.mobile-1.4.5.min.css">
+    <script src="../js/jquery-1.11.3.min.js"></script>
+    <script src="../js/jquery.mobile-1.4.5.min.js"></script>
+    <link rel="stylesheet" href="../css/common.css" />
+    <script type="text/javascript" src="../js/common.js"></script>
+    <script>
+        //本行程的开始时间
+        var tripTime = '';
+
+        
+        $(function(){
+            //本行程详情
+            $.ajax({
+                type : "POST",
+                url  : "/stroke/api/detail/"+getParam('id'),
+                cache : false,
+                async:false,
+                data : null,
+                success : function(data){
+                    var d = data.data[0];
+                    $('#tripId').val(d.id);                      
+                    $('#time').text(transDate(d.departureTime)); 
+                    tripTime = d.departureTime;                     
+                    $('#from').text('从：'+d.startAddr);                      
+                    $('#to').text('到：'+d.endAddr);
+                    // $('#myswitch').val(d.quickConfirm).flipswitch("refresh");     
+                    // $('#myswitch').bind('change',function(){
+                        //切换闪电确认方式
+                        // $.postForm('/stroke/api/update','#trapForm',function(d){
+                        //     showMsg(d.message);
+                        // })
+                    // });                 
+                },
+                error : function(){
+                    
+                }
+            });
+            
+
+            //顺路的车主列表
+            $.post("/stroke/api/itinerary/list",JSON.stringify({id:getParam('id')}),
+                function(d){
+                    $('#defaultpanel').append('<li style="color:darkgoldenrod">顺路的车主：</li>')
+                    for(var i in d.data){
+                        var item = d.data[i];
+                        item.diffDate = diffDate(tripTime,item.departureTime);
+                        item.suitability = parseFloat(item.suitability).toFixed(2);
+                        renderByTemplate('#defaultpanel','#template',item);
+                    }
+                    $("#defaultpanel").listview('refresh')
+                    .find('li').removeClass('ui-first-child').removeClass('ui-last-child'); //不删掉这个class最后一个的头像圆角有问题
+                    // $('.trip-content').on("tap",function(){
+                    //     window.location.href='tripDetail.html?id='+$(this).attr('id');
+                    // });
+                }
+            );
+
+            
+
+        })
+    </script>
+</head>
+<body>
+<div id="template" style="display: none;">
+    <li>                
+        <a data-ajax="false" href="../message.html?t={inviteeTripId}">
+        <img class="person-img" src="{avatar}" 
+            style="width:70px;height:70px;margin-top:25px;margin-left:10px;">
+        <h2>{useralias}<span style="color:darkgoldenrod">&nbsp;&nbsp;{suitability}%顺路</span></h2>
+        <p><span>{startAddr}</span> <span style="color:darkgoldenrod">{startDistance} km</span></p>
+        <p><span>{endAddr}</span> <span style="color:darkgoldenrod">{endDistance} km</span></p>
+        <p><span>时间相差：</span><span style="color:darkgoldenrod">&nbsp;&nbsp;{diffDate}</span></p>
+        <p>剩余座位数：{quantity}</p> 
+        </a>
+    </li>
+</div>
+<div data-role="page" id="pageone" class="bg-img">
+    <div data-role="header" data-position="fixed" data-tap-toggle="false">
+        <a href="#" data-rel="back" class="ui-btn ui-btn-inline ui-icon-arrow-l ui-btn-icon-notext ui-corner-all">使用圆圈（默认）</a>
+        <h1>乘客端 - 行程详情</h1>
+    </div>
+    <div style="margin-top:120px;"></div>
+    <form id="trapForm">
+    <div id="trapDetail" class="ui-content2" style="padding:15px;">
+        <input id="tripId" type="hidden" name="id"/>
+        <h2 style="color:dodgerblue;text-align: center;">等待车主邀请……</h2>
+        <!-- <h3 id="time"></h3> -->
+        <p id="from"></p>
+        <p id="to"></p>
+        <!-- <p style="text-align:right">
+            闪电确认：
+            <select id="myswitch" name="quickConfirm" data-role="flipswitch" data-mini="true">
+                <option value="0">关</option>
+                <option value="1">开</option>
+            </select>
+        </p> -->
+        <p style="text-align:right">
+            <a data-ajax="false" href="javascript:toUrl('tripReq.html?id='+getParam('id'))" style="text-decoration: none;">邀请我的&gt;&gt;</a>            
+        </p>
+    </div>
+    </form>
+    
+    <div style="border:1px solid #ccc; margin: 15px;">
+        <ul data-role="listview" data-inset="true"  id="defaultpanel">
+
+        </ul>
+    </div>
+
+
+    <div style="margin-bottom:20px;"></div>
+    <div data-role="footer" data-position="fixed" data-tap-toggle="false">
+        <div data-role="navbar" style="margin: 0;">
+            <ul>
+                <li><a href="javascript:location.href='user.html'" data-icon="home">首页</a></li>
+                <li><a href="javascript:location.href='trip.html'" data-icon="grid" class="ui-btn-active">我的行程</a></li>
+                <li><a href="javascript:location.href='order.html'" data-icon="bullets">我的订单</a></li>
+                <li><a href="javascript:location.href='../common/userCenter.html'" data-icon="user">个人中心</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>路径规划</title>
+    <script src="js/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript"
+        src="//api.map.baidu.com/api?type=webgl&v=1.0&ak=TqqNBTY9uHlzW3h0VqWb2kn2WFBF5xqu"></script>
+    <style>
+        body,
+        html {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            font-family: "微软雅黑";
+            font-size: 14px;
+        }
+
+        #allmap {
+            width: 100%;
+            height: 800px;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="javascript:window.history.back()" style="height: 30px; width: 50px;">返回</a>
+    <div id='allmap'></div>
+    <script>
+        //http://localhost/web/way.html?a1=116.291783&a2=39.940117&b1=116.403963&b2=39.915119
+        function getParam(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) return unescape(r[2]); return null;
+        }
+        var a1 = parseFloat(getParam('a1'));
+        var a2 = parseFloat(getParam('a2'));
+        var b1 = parseFloat(getParam('b1'));
+        var b2 = parseFloat(getParam('b2'));
+        var x = (a1+b1)/2;
+        var y = (a2+b2)/2;
+
+        var map = new BMapGL.Map("allmap");
+        map.centerAndZoom(new BMapGL.Point(x, y), 12);
+        var output = "从西单到上地驾车需要";
+        var searchComplete = function (results) {
+            if (transit.getStatus() != BMAP_STATUS_SUCCESS) {
+                return;
+            }
+            var plan = results.getPlan(0);
+            output += plan.getDuration(true) + "\n";                //获取时间
+            output += "总路程为：";
+            output += plan.getDistance(true) + "\n";             //获取距离
+        }
+        var transit = new BMapGL.DrivingRoute(map, {
+            renderOptions: { map: map },
+            onSearchComplete: searchComplete,
+            onPolylinesSet: function () {
+                setTimeout(function () {
+                     console.log(output);
+                }, "1000");
+            }
+        });
+        var start = new BMapGL.Point(a1, a2);
+        var end = new BMapGL.Point(b1, b2);
+        transit.search(start, end);
+    </script>
+</body>
+
+</html>

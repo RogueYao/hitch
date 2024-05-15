@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>黑马顺风车</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../css/jquery.mobile-1.4.5.min.css">
+    <script src="../js/jquery-1.11.3.min.js"></script>
+    <script src="../js/jquery.mobile-1.4.5.min.js"></script>
+    <link rel="stylesheet" href="../css/common.css" />
+    <script type="text/javascript" src="../js/common.js"></script>
+    <script>
+
+
+        
+
+        $(function(){
+            //本行程详情
+            $.ajax({
+                type : "POST",
+                url  : "/stroke/api/detail/"+getParam('id'),
+                cache: false,
+                data: null,
+                async:false,
+                success: function (data) {
+                    var d = data.data[0];
+                    $('#tripId').val(d.id);                      
+                    $('#tripStatus').val(d.status);                      
+                    $('#time').text(transDate(d.departureTime));                      
+                    $('#from').text(d.startAddr);                      
+                    $('#to').text(d.endAddr);
+                    // d.status=3;
+                    $('#go').text(d.status == 1 ? '上车':'下车');
+                    
+                }
+            });
+            //司机详情
+            $.ajax({
+                type : "POST",
+                url  : "/order/api/view/order/"+getParam('id'),
+                cache : false,
+                data : null,
+                success : function(data){
+                    var d = data.data[0];
+                    d.time = (d.estimatedTime/60).toFixed(0)
+                    renderByTemplate('#defaultpanel','#template',d);
+                    $("#defaultpanel").listview('refresh')                  
+                },
+                error : function(){
+                    
+                }
+            });
+        })
+
+        function letsGo(){
+            // if(d.status!=1 && d.status!=2){
+            //     showMsg('状态不对！'+d.status);
+            //     return;
+            // }
+            if($('#tripStatus').val() == 1){
+                //上车
+                $.post('/stroke/api/hitchhiker/'+$('#tripId').val(),"",function(d){
+                    showMsg('成功！到站后请点击下车结束行程！');
+                    toUrl('tripConfirmed.html?id='+$('#tripId').val(),1000);
+                })
+            }else if($('#tripStatus').val() == 2){
+                //下车
+                $.post('/stroke/api/freeride/'+$('#tripId').val(),"",function(d){
+                    showMsg('成功！已为您生成订单，请及时支付！');
+                    toUrl('order.html',1000);
+                })
+            }
+        }
+    </script>
+</head>
+<body>
+<div id="template" style="display: none;">
+    <li style="text-align:center">
+        <h2>司机信息</h2>
+    </li>
+    <li>             
+        <a href="../message.html?t={driverStrokeId}" class="ui-btn">
+        <img class="person-img" src="{driverAvatar}" 
+            style="width:70px;height:70px;margin-top:25px;margin-left:10px;">
+        <h2 id="driverName">{driverUseralias}</h2>
+        <p><span>车牌号：</span> <span style="color:darkgoldenrod" id="tripRatio">{carNumber}</span></p>
+        <p><span>预计支付：</span> <span style="color:darkgoldenrod" id="cost">￥{cost}</span></p>
+        <p><span>预计耗时：</span> <span style="color:darkgoldenrod" id="cost">{time}分钟</span></p>
+        
+        </a>
+    </li> 
+    <li>
+        <button data-inline="true" id="go" onclick="letsGo()" style="float:right;">上车</button>
+    </li>
+</div>
+
+<div data-role="page" id="pageone" class="bg-img">
+    <div data-role="header" data-position="fixed" data-tap-toggle="false">
+        <a href="#" data-rel="back" class="ui-btn ui-btn-inline ui-icon-arrow-l ui-btn-icon-notext ui-corner-all">使用圆圈（默认）</a>
+        <h1>乘客端 - 行程详情</h1>
+    </div>
+    <div style="margin-top:120px;"></div>
+
+    <div id="trapDetail" class="ui-content2" style="padding:15px;">
+        <input id="tripId" type="hidden" />
+        <input id="tripStatus" type="hidden" />
+        <h2 style="color:green;text-align: center;">已确认同行</h2>
+        <h3 id="time"></h3>
+        <p id="from"></p>
+        <p id="to"></p>
+                   
+    </div>
+
+    <div id="driverDetail" class="ui-content2" style="padding:15px;line-height: 25px;">
+        <ul data-role="listview" data-inset="true"  id="defaultpanel">
+
+        </ul>
+    </div>
+
+
+    <div style="margin-bottom:20px;"></div>
+    <div data-role="footer" data-position="fixed" data-tap-toggle="false">
+        <div data-role="navbar" style="margin: 0;">
+            <ul>
+                <li><a href="javascript:location.href='user.html'" data-icon="home">首页</a></li>
+                <li><a href="javascript:location.href='trip.html'" data-icon="grid" class="ui-btn-active">我的行程</a></li>
+                <li><a href="javascript:location.href='order.html'" data-icon="bullets">我的订单</a></li>
+                <li><a href="javascript:location.href='../common/userCenter.html'" data-icon="user">个人中心</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -71,7 +71,7 @@ services:
     container_name: hitch-onekey-backend  
     restart: always 
     ports:  
-      - "9201:8080"
+      - "9208:8080"
     links:
       - hitch-onekey-mysql
       - hitch-onekey-minio
@@ -98,6 +98,20 @@ services:
       baidu.secretkey: 33fUD7ztZm1v5uBIwiKZFICPIbcXhgju
       baidu.map.ak: MkIZ2ME6zhPNU1o3BnIzq38Vo38WPz8X
       baidu.map.api: https://api.map.baidu.com/routematrix/v2/driving
+    networks:  
+      - hitch-onekey-net
+
+  hitch-onekey-nginx:  
+    image: nginx:1.16.1  
+    container_name: hitch-onekey-nginx  
+    restart: always  
+    ports:  
+      - "9201:80"  
+    volumes:  
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ../web:/usr/share/nginx/html/web
+    depends_on:  
+      - hitch-onekey-backend  
     networks:  
       - hitch-onekey-net
 

@@ -21,6 +21,8 @@ mvn package docker:build
 
 docker-compose up -d
 
+*备注：docker-compose.yml默认启动allinone集成了静态文件的版本，如果需要动静分离，请启动带-nginx后缀的版本*
+
 
 
 ## 启动后的一些配置：

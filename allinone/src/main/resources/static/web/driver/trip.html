@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>黑马顺风车</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../css/jquery.mobile-1.4.5.min.css">
+    <script src="../js/jquery-1.11.3.min.js"></script>
+    <script src="../js/jquery.mobile-1.4.5.min.js"></script>
+    <link rel="stylesheet" href="../css/common.css" />
+    <script type="text/javascript" src="../js/common.js"></script>
+
+    <script>
+        var statusName = { 0: '邀请中', 1: '已发车', 3: '已送达', 4: '已取消' };
+        var statusColor = {1:'goldenrod',3:'green',4:'red'}
+
+        $.ajax({
+            type: "POST",
+            url: "/stroke/api/list",
+            // type : "GET",
+            // url:"../mock/trip.json",
+            cache: false,
+            data: '{"role":' + localStorage.getItem('current_role') + '}',
+            success: function (d) {
+                for (var i = 0; i < d.data.length; i++) {
+                    var item = d.data[i];
+                    item.departureTime = item.departureTime.substring(0, 16)
+                    item.statusName = statusName[item.status];
+                    item.statusColor = statusColor[item.status];
+                    renderByTemplate('#defaultpanel', '#template', item);
+                }
+                $('.trip-content').on("tap", function () {
+                    var u = 'tripConfirmed';
+                    switch ($(this).attr('status')) {
+                        case '0': u = 'tripDetail'; break;
+                        case '1': u = 'tripConfirmed'; break;
+                        default: u = 'tripInfo';
+                    }
+                    window.location.href = u + '.html?id=' + $(this).attr('id');
+                });
+            },
+            error: function () {
+
+            }
+        });
+
+
+
+    </script>
+</head>
+
+<body>
+    <div id="template" style="display: none;">
+        <div data-role="content" class="ui-content ui-content2 trip-content" id="{id}" status="{status}">
+            <h4 style="color:darkgoldenrod">
+                出行时间：{departureTime}
+            </h4>
+            <p>
+                从：<span>{startAddr}</span>
+                <br>
+                到：<span>{endAddr}</span>
+            </p>
+            <p style="text-align: right;height:20px;">
+                <a href="#" style="cursor:pointer;text-decoration:none;">
+                    <span style="color:{statusColor}">
+                        {statusName}</span>
+                </a>
+            </p>
+        </div>
+    </div>
+
+    <div data-role="page" id="pageone" class="bg-img">
+        <div data-role="header" data-position="fixed" data-tap-toggle="false">
+            <a href="javascript:changeRole()" class="ui-btn ui-btn-inline ui-corner-all">切换</a>
+            <h1>司机端 - 我的行程</h1>
+        </div>
+        <div style="margin-top:120px;" id="trips"></div>
+
+        <div id="defaultpanel">
+        </div>
+
+        <div style="margin-bottom:20px;"></div>
+        <div data-role="footer" data-position="fixed" data-tap-toggle="false">
+            <div data-role="navbar" style="margin: 0;">
+                <ul>
+                    <li><a href="javascript:location.href='user.html'" data-icon="home">首页</a></li>
+                    <li><a href="javascript:location.href='trip.html'" data-icon="grid" class="ui-btn-active">我的行程</a>
+                    </li>
+                    <li><a href="javascript:location.href='order.html'" data-icon="bullets">我的订单</a></li>
+                    <li><a href="javascript:location.href='../common/userCenter.html'" data-icon="user">个人中心</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

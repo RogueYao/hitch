@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>黑马顺风车</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../css/jquery.mobile-1.4.5.min.css">
+    <script src="../js/jquery-1.11.3.min.js"></script>
+    <script src="../js/jquery.mobile-1.4.5.min.js"></script>
+    <link rel="stylesheet" href="../css/common.css" />
+    <script type="text/javascript" src="../js/common.js"></script>
+
+    <script>
+        $(function () {
+            var f = localStorage.getItem('from');
+            var t = localStorage.getItem('to');
+            var time = localStorage.getItem('time');
+            //出发地
+            if (f) {
+                f = f.split("#");
+                $('#from-txt').val(f[0]);
+                f = f[1].split(',')
+                $('#from').val(f[0]);//经度
+                $('#from2').val(f[1]);//纬度
+            }
+            //目的地
+            if (t) {
+                t = t.split("#");
+                $('#to-txt').val(t[0]);
+                t = t[1].split(',')
+                $('#to').val(t[0]);//经度
+                $('#to2').val(t[1]);//纬度
+            }
+            if (time) {
+                $('#time').val(time);
+            }
+            $('#time').blur(function () {
+                localStorage.setItem('time', $(this).val());
+            });
+            $('#from-txt').on('tap', function () {
+                window.location.href = "../map.html?type=f";
+            });
+            $('#to-txt').on('tap', function () {
+                window.location.href = '../map.html?type=t';
+            });
+            $('#go').click(function () {
+
+                //pop提示
+                if ($('#from-txt').val() == '') {
+                    showMsg('请选择出发地');
+                    return;
+                } else if ($('#to-txt').val() == '') {
+                    showMsg('请选择目的地');
+                    return;
+                } else if ($('#time').val() == '') {
+                    showMsg('请选择出行时间');
+                    return;
+                }
+
+                //ajax提交行程
+                $.postForm("/stroke/api/publish", '#tripForm', function (d) {
+
+                    if (d.code == 200) {
+                        //清除本地缓存，跳到行程页
+                        showMsg('发布成功');
+                        // localStorage.removeItem('from');
+                        // localStorage.removeItem('to');
+                        // localStorage.removeItem('time');
+                        window.location.href = 'trip.html';
+                    } else {
+                        showMsg(d.message);
+                    }
+                })
+
+
+            });
+
+            $('#myPopupDialog').popup();
+        })
+    </script>
+</head>
+
+<body>
+
+
+    <div data-role="page" id="pageone" class="bg-img">
+        <div data-role="header" data-position="fixed" data-tap-toggle="false">
+            <a href="javascript:changeRole()" class="ui-btn ui-btn-inline ui-corner-all">切换</a>
+            <h1>乘客端 - 黑马顺风车</h1>
+        </div>
+        <div style="margin-top:60px;"></div>
+        <div data-role="main" class="ui-content ui-content2 ui-shadow-inset" style="background-color:#fff">
+            <form id="tripForm">
+                <div data-role="content ">
+                    出发时间：
+                    <input type="datetime-local" name="departureTime" id="time" />
+
+                    出发地：
+                    <input id="from-txt" name="startAddr" readonly="true" />
+                    <input id="from" name="startGeoLng" type="hidden">
+                    <input id="from2" name="startGeoLat" type="hidden">
+
+                    目的地：
+                    <input id="to-txt" name="endAddr" readonly="true" />
+                    <input id="to" name="endGeoLng" type="hidden">
+                    <input id="to2" name="endGeoLat" type="hidden">
+
+                    <!-- 同行人数： -->
+                    <!-- <input type="range" name="quantity" id="points" value="1" min="1" max="5" data-highlight="true"> -->
+                    <input name="quantity" value="1" type="hidden"/>
+
+                    <br>闪电确认：
+                    <select name="quickConfirm" id="myswitch" data-role="flipswitch" data-mini="true">
+                        <option value="0">否</option>
+                        <option value="1">是</option>
+                    </select>
+
+                    <input type="hidden" name="role" value="0">
+                    <input type="hidden" name="status" value="0">
+                    <br><br>
+                    <button type="button" class="ui-btn-active" id="go">发布行程</button>
+
+                </div>
+            </form>
+        </div>
+
+
+
+        <div style="margin-bottom:75px;"></div>
+        <div data-role="footer" data-position="fixed" data-tap-toggle="false">
+            <div data-role="navbar" style="margin: 0;">
+                <ul>
+                    <li><a href="javascript:location.href='user.html'" data-icon="home" class="ui-btn-active">首页</a>
+                    </li>
+                    <li><a href="javascript:location.href='trip.html'" data-icon="grid">我的行程</a></li>
+                    <li><a href="javascript:location.href='order.html'" data-icon="bullets">我的订单</a></li>
+                    <li><a href="javascript:location.href='../common/userCenter.html'" data-icon="user">个人中心</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>黑马顺风车</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../css/jquery.mobile-1.4.5.min.css">
+    <script src="../js/jquery-1.11.3.min.js"></script>
+    <script src="../js/jquery.mobile-1.4.5.min.js"></script>
+    <link rel="stylesheet" href="../css/common.css" />
+    <script type="text/javascript" src="../js/common.js"></script>
+    <script type="text/javascript" src="../js/upload.js"></script>
+    <style>
+        html,
+        body {
+            padding: 0;
+            margin: 0;
+        }
+
+        table .h {
+            /*width: 100px;*/
+            height: 50px;
+            font-weight: bold;
+        }
+
+        img {
+            width: 100%;
+            height: 100%;
+            max-height: 180px;
+        }
+    </style>
+    <script>
+        $(function () {
+
+            $('.person-img').attr('src', current_user.avatar);
+            $('#driverName').text((current_user.useralias == '') ? current_user.username : current_user.useralias);
+            $('#valid').text((current_user.status == 1) ? '已完成' : '未完成');
+            $('#driver').text((current_user.role == 1) ? '已完成' : '未完成');
+
+            $.post('/account/api/getAuthenticationInfo', '{}', function (data) {
+                if (data.code == -1002) {
+                    //未认证过
+                    data.data = [{}];
+                }
+                var defImg = '../img/default-card.png';
+                var d = data.data[0];
+                $('table').find('img').each(function () {
+                    $(this).attr('src', d[$(this).attr('class')] || defImg);
+                    $('input[name="'+$(this).attr('class')+'"]').val(d[$(this).attr('class')]);
+                })
+            });
+
+            $('li').eq(0).removeClass('ui-first-child');
+            var roleName = (localStorage.getItem('current_role') == '0' ? 'user' : 'driver');
+            $('.role').each(function () {
+                $(this).attr('href', '../' + roleName + '/' + $(this).attr('href'));
+            });
+        })
+
+        function validBtn() {
+            $.postForm('/account/api/modifyAuthentication', '#validForm', function (data) {
+                showMsg(data.message);
+                topDiv.scrollIntoView();
+            });
+        }
+
+    </script>
+</head>
+
+<body>
+
+    <div id="topDiv"></div>
+    <div data-role="page" id="pageone">
+        <div data-role="header" data-position="fixed" data-tap-toggle="false">
+            <a href="#" data-rel="back"
+                class="ui-btn ui-btn-inline ui-icon-arrow-l ui-btn-icon-notext ui-corner-all">使用圆圈（默认）</a>
+            <h1>完善资料</h1>
+        </div>
+
+        <ul data-role="listview" data-inset="true" id="defaultpanel" style="margin:15px;">
+            <li>
+                <a href="#" class="ui-btn"
+                    style="border-top-left-radius: 5px; border-top-right-radius: 5px; background-color:#ddd;">
+                    <img class="person-img" src="" style="width:70px;height:70px;margin-top:25px;margin-left:10px;">
+                    <h2 id="driverName" id="useralias"></h2>
+                    <p></p>
+                    <p><span>实名认证：</span> <span style="color:darkgoldenrod" id="valid">未完成</span></p>
+                    <p></p>
+                    <p><span>车主认证：</span> <span style="color:darkgoldenrod" id="driver">已完成</span></p>
+                </a>
+            </li>
+            <li>
+                <form id="validForm">
+                    <input name="personalPhoto" type="hidden">
+                    <input name="cardIdFrontPhoto" type="hidden">
+                    <input name="cardIdBackPhoto" type="hidden">
+                </form>
+                <table>
+                    <tr>
+                        <td class="h">个人照片：</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <!-- ajax文件上传案例，命名规范：file的id = input的name = img的class -->
+                            <!-- file的name必须是file，固定的 -->
+                            <img src="../img/default-card.png" class="personalPhoto" />
+                            <input type="file" name="file" id="personalPhoto" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="h">身份证（人像面）：</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <!-- ajax文件上传案例，命名规范：file的id = input的name = img的class -->
+                            <!-- file的name必须是file，固定的 -->
+                            <img src="../img/default-card.png" class="cardIdFrontPhoto" />
+                            <input type="file" name="file" id="cardIdFrontPhoto" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="h">身份证（国徽面）：</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <!-- ajax文件上传案例，命名规范：file的id = input的name = img的class -->
+                            <!-- file的name必须是file，固定的 -->
+                            <img src="../img/default-card.png" class="cardIdBackPhoto" />
+                            <input type="file" name="file" id="cardIdBackPhoto" />
+                        </td>
+                    </tr>
+
+                </table>
+            </li>
+            <li>
+                <p>
+                    <button class="ui-btn-active" onclick="validBtn()" style="width:80px;float:right;">保存</button>
+                </p>
+            </li>
+        </ul>
+
+        <div data-role="footer" data-position="fixed" data-tap-toggle="false">
+            <div data-role="navbar" style="margin: 0;" id="footerLink">
+                <ul>
+                    <li><a href="user.html" data-ajax="false" data-icon="home" class="role">首页</a></li>
+                    <li><a href="trip.html" data-ajax="false" data-icon="grid" class="role">我的行程</a></li>
+                    <li><a href="order.html" data-ajax="false" data-icon="bullets" class="role">我的订单</a></li>
+                    <li><a href="userCenter.html" data-ajax="false" data-icon="user" class="ui-btn-active">个人中心</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

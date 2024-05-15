@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>黑马顺风车</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../css/jquery.mobile-1.4.5.min.css">
+    <script src="../js/jquery-1.11.3.min.js"></script>
+    <script src="../js/jquery.mobile-1.4.5.min.js"></script>
+    <link rel="stylesheet" href="../css/common.css" />
+    <script type="text/javascript" src="../js/common.js"></script>
+    <script>
+        var currentTrip;
+        $(function () {
+            //本行程详情
+            $.ajax({
+                type : "POST",
+                url  : "/stroke/api/detail/"+getParam('id'),
+                cache: false,
+                data: null,
+                async:false,
+                success: function (data) {
+                    var d = data.data[0];
+                    $('#tripId').val(d.id);
+                    currentTrip = d.id;
+                    
+                }
+            });
+            //邀请我的
+            $.ajax({
+                type: "POST",
+                url: "/stroke/api/invite/list/"+getParam('id'),
+                cache: false,
+                data: null,
+                success: function (data) {
+                    var d = data.data;
+                    var template = $('#template').html();
+                    for (i in d) {
+                        var c = d[i];
+                        var sn = {'0':'未确认','1':'已确认','2':'已拒绝','3':'已超时'}
+                        c.statusName = sn[c.status];
+                        var t = template.format(c);
+                        $('#defaultpanel').append(t);
+                        if(c.status != 0){
+                            $('#defaultpanel li p').last().html('<p style="text-align:right;">'+c.statusName+'</p>');
+                        }
+                        if(c.quantity == 0){
+                            $('#defaultpanel li p').last().html('<p style="text-align:right;">已满员</p>');
+                        }
+                    }
+                    $('#defaultpanel').listview('refresh')
+                    .find('li').removeClass('ui-first-child').removeClass('ui-last-child');
+                },
+                error: function () {
+
+                }
+            });
+
+        })
+
+        //确认弹窗点击ok后的回调，id就是触发按钮的id
+        function confirmCallBack(id) {
+            console.log([currentTrip,id]);
+            var i = id.split(',');
+            $.post('/stroke/api/invite/accept',
+            JSON.stringify({inviterTripId:i[0],inviteeTripId:currentTrip,status:i[1]}),
+            function(d){
+                showMsg(d.message);
+                if(i[1] == '1'){ //接受邀请，进确认同行页
+                    if(d.code == '-5002'){ //如果已经发车
+                        toUrl('tripReq.html?id='+currentTrip,1000);
+                    }else{ //正常情况进确认页
+                        toUrl('tripConfirmed.html?id='+currentTrip,1000);
+                    }
+                }else{ //拒绝，进详情页
+                    toUrl('tripDetail.html?id='+currentTrip,1000);
+                }
+            });
+        }
+    </script>
+</head>
+
+<body>
+
+
+
+    <div data-role="page" id="pageone" class="bg-img">
+        <div data-role="header" data-position="fixed" data-tap-toggle="false">
+            <a href="#" data-rel="back"
+                class="ui-btn ui-btn-inline ui-icon-arrow-l ui-btn-icon-notext ui-corner-all">使用圆圈（默认）</a>
+            <h1>乘客端 - 邀请信息</h1>
+        </div>
+        <div style="margin-top:120px;"></div>
+
+        <div id="trapDetail" class="ui-content2" style="padding:15px;">
+            <input id="tripId" type="hidden" />
+            <h2 style="color:goldenrod">收到邀请……</h2>
+            <p>您可以点击头像，随时与他沟通出行事宜</p>
+
+        </div>
+
+        <div id="driverDetail" class="ui-content2">
+            <ul data-role="listview" data-inset="true" id="defaultpanel">
+                
+            </ul>
+        </div>
+
+
+        <div style="margin-bottom:20px;"></div>
+        <div data-role="footer" data-position="fixed" data-tap-toggle="false">
+            <div data-role="navbar" style="margin: 0;">
+                <ul>
+                    <li><a href="javascript:location.href='user.html'" data-icon="home">首页</a></li>
+                    <li><a href="javascript:location.href='trip.html'" data-icon="grid" class="ui-btn-active">我的行程</a>
+                    </li>
+                    <li><a href="javascript:location.href='order.html'" data-icon="bullets">我的订单</a></li>
+                    <li><a href="javascript:location.href='../common/userCenter.html'" data-icon="user">个人中心</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+
+
+<div id="template" style="display:none;">
+    <li>
+        <a data-ajax="false" href="../message.html?t={inviteeTripId}" class="ui-btn">
+                <img class="person-img" src="{avatar}" 
+                    style="width:70px;height:70px;margin-top:25px;margin-left:10px;"/>
+                <h2 id="driverName">
+                    <span>{useralias}</span>
+                </h2>
+                <!-- <p><span>行程匹配：</span> <span style="color:darkgoldenrod" id="tripRatio">{ratio}</span></p> -->
+                <p><span>从：</span> <span style="color:darkgoldenrod">{startAddr}</span></p>
+                <p><span>到：</span> <span style="color:darkgoldenrod">{endAddr}</span></p>
+                
+        </a>  
+    </li>
+    <li style="border-top-width: 0px;">
+        <p>
+            <!-- 点击弹窗，show-txt属性就是弹出的提示信息，id号可以在回调中写不同的业务 -->
+            <a href="#myPopupDialog" data-rel="popup" data-position-to="window" data-mini="true"
+                data-inline="true" data-transition="fade"
+                class="popup-btn ui-btn ui-corner-all ui-shadow ui-btn-inline ui-mini"
+                id="rejectTrip" style="width:50px;float:right;" onclick="confirmInfo('{id},2','残忍的拒绝他？')">不合适</a>
+            <a href="#myPopupDialog" data-rel="popup" data-position-to="window" data-mini="true"
+                data-inline="true" data-transition="fade"
+                class="popup-btn ui-btn ui-corner-all ui-shadow ui-btn-inline ui-mini ui-btn-active"
+                onclick="confirmInfo('{id},1','愉快接受邀请？')" id="acceptTrip" style="width:80px;float:right;">确认同行</a>
+        </p>
+    </li>    
+
+</div>
+
+
+</html>

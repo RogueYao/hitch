@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>黑马顺风车</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css">
+    <script src="js/jquery-1.11.3.min.js"></script>
+    <script src="js/jquery.mobile-1.4.5.min.js"></script>
+    <link rel="stylesheet" href="css/common.css" />
+    <script type="text/javascript" src="js/common.js"></script>
+
+    <script>
+        $(function () {
+
+            // 登录
+            $('#go').click(function () {
+                if ($('#u').val() == '' || $('#p').val() == '') return;
+                $.postForm("/account/api/login", '#loginForm', function (d) {
+                    if (d.code == 200) {
+                        showMsg('登录成功');
+                        localStorage.setItem('SESSION_TOKEN_KEY', d.data[0].token);
+                        localStorage.setItem('current_role',0); //默认切换
+                        if ($('#isDriver').val() == '1') {
+                            toUrl('driver/user.html', 1000);
+                        } else {
+                            toUrl('user/user.html', 1000); //第一次登陆会进这里
+                        }
+                    } else {
+                        showMsg(d.message);
+                    }
+                })
+            });
+            // 注册
+            $('#reg').click(function () {
+                if ($('#username').val() == '' || $('#password').val() == '' || $('#phone').val() == '') {
+                    showMsg('请将信息填写完整！');
+                    return;
+                }
+                if ($('#password').val() != $('#password2').val()) {
+                    showMsg('两次密码不一致！');
+                    return;
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "/account/api/register",
+                    cache: false,
+                    data: formToJson('#regForm'),
+                    success: function (d) {
+                        console.log(d);
+                        if (d.code == 200) {
+                            showMsg('注册成功！');
+                            toUrl('login.html', 1000);
+                        } else {
+                            showMsg(d.message);
+                        }
+                    }
+                });
+            });
+        });
+
+    </script>
+</head>
+
+<body>
+
+
+    <div data-role="page" id="pageone" class="bg-img">
+        <div data-role="header" data-position="fixed" data-tap-toggle="false">
+            <h1>登录</h1>
+        </div>
+        <div style="margin-top:60px;"></div>
+        <div data-role="main" class="ui-content ui-content2 ui-shadow-inset" style="background-color: white">
+            <form id="loginForm">
+
+                <div data-role="content">
+                    用户名：
+                    <input name="username" value="" id="u" />
+                    密码：
+                    <input name="password" value="" id="p" type="password">
+                    <!-- <br>切换：
+                    <select id="isDriver" data-role="flipswitch" data-mini="true">
+                        <option value="0">否</option>
+                        <option value="1">是</option>
+                    </select> -->
+                    <br><br>
+                    <button type="button" class="ui-btn-active" id="go">登录</button>
+                    <div data-role="content" style="text-align: right;">
+                        <a href="#pagetwo" style="text-decoration: none;">还没有账号？去注册&gt;&gt;</a>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+
+        <div style="margin-bottom:75px;"></div>
+        <div data-role="footer" data-position="fixed" data-tap-toggle="false">
+            <div data-role="navbar" style="margin: 0;">
+                <ul>
+                    <li><a href="javascript:location.href='user/user.html'" data-icon="home"
+                            class="ui-btn-active">首页</a>
+                    </li>
+                    <li><a href="javascript:location.href='user/trip.html'" data-icon="grid">我的行程</a></li>
+                    <li><a href="javascript:location.href='user/order.html'" data-icon="bullets">我的订单</a></li>
+                    <li><a href="javascript:location.href='common/userCenter.html'" data-icon="user">个人中心</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div data-role="page" id="pagetwo" class="bg-img">
+        <div data-role="header">
+            <h1>注册</h1>
+        </div>
+
+        <div style="margin-top:60px;"></div>
+        <div data-role="main" class="ui-content ui-content2 ui-shadow-inset" style="background-color: white">
+            <form id="regForm">
+                
+                <div data-role="content ">
+                    用户名：
+                    <input name="username" id="username" />
+                    手机号：
+                    <input name="phone" id="phone" />
+                    密码：
+                    <input name="password" id="password" type="password">
+                    确认密码：
+                    <input id="password2" type="password">
+                    <br>
+                    <button type="button" class="ui-btn-active" id="reg">注册</button>
+                </div>
+            </form>
+            <div data-role="content" style="text-align: right;">
+                <a href="#pageone" style="text-decoration: none;">已有账号？去登录&gt;&gt;</a>
+            </div>
+        </div>
+
+        <div style="margin-bottom:75px;"></div>
+        <div data-role="footer" data-position="fixed" data-tap-toggle="false">
+            <div data-role="navbar" style="margin: 0;">
+                <ul>
+                    <li><a href="javascript:location.href='user/user.html'" data-icon="home"
+                            class="ui-btn-active">首页</a>
+                    </li>
+                    <li><a href="javascript:location.href='user/trip.html'" data-icon="grid">我的行程</a></li>
+                    <li><a href="javascript:location.href='user/order.html'" data-icon="bullets">我的订单</a></li>
+                    <li><a href="javascript:location.href='common/userCenter.html'" data-icon="user">个人中心</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,35 @@
+* { touch-action: pan-y; }
+.ui-content2 {
+    border: 1px solid #aaa;
+    margin:10px 15px;
+    padding: 20px;
+    background-color: #405f471f;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+}
+.corner{
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+}
+h1,h2,h3,h4,h5,p{
+    margin-top:5px;
+    margin-bottom: 10px;
+}
+.bg-img{
+        background-image:url('../img/bg.png');
+        background-repeat:no-repeat;
+        background-size:100% 150px;
+        -moz-background-size:100% 100%;
+}
+html, body {
+    padding: 0;
+    margin: 0;
+}
+.person-img{
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    border-radius:50%;
+}
+
