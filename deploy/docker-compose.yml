@@ -1,9 +1,9 @@
-version: '3'  
-services:  
-  hitch-onekey-mysql:  
-    image: mysql:5.7.43  
-    container_name: hitch-onekey-mysql  
-    restart: always  
+version: '3'
+services:
+  hitch-onekey-mysql:
+    image: mysql:5.7.43
+    container_name: hitch-onekey-mysql
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_ROOT_HOST: '%'
@@ -13,31 +13,31 @@ services:
       --character-set-server=utf8mb4
       --collation-server=utf8mb4_general_ci
       --explicit_defaults_for_timestamp=true
-    volumes:  
-      - ./mysql-data:/var/lib/mysql 
-      - ./docker-compose-init.sql:/docker-entrypoint-initdb.d/init.sql 
-    ports:  
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+      - ./docker-compose-init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
       - "9209:3306"
-    networks:  
+    networks:
       - hitch-onekey-net
 
-  hitch-onekey-rabbitmq:  
-    image: rabbitmq:3.6.10-management  
-    container_name: hitch-onekey-rabbitmq  
+  hitch-onekey-rabbitmq:
+    image: rabbitmq:3.6.10-management
+    container_name: hitch-onekey-rabbitmq
     restart: always
     ports:
       - "9202:15672"
       - "9203:5672"
-    networks:  
+    networks:
       - hitch-onekey-net
 
-  hitch-onekey-redis:  
-    image: redis:6.0.6  
-    container_name: hitch-onekey-redis  
-    restart: always  
+  hitch-onekey-redis:
+    image: redis:6.0.6
+    container_name: hitch-onekey-redis
+    restart: always
     ports:
       - "9204:6379"
-    networks:  
+    networks:
       - hitch-onekey-net
 
   hitch-onekey-minio:
@@ -57,25 +57,25 @@ services:
     networks:
       - hitch-onekey-net
 
-  hitch-onekey-mongo4:  
-    image: docker.io/mongo:4.4  
-    container_name: hitch-onekey-mongo4  
-    restart: always  
+  hitch-onekey-mongo4:
+    image: docker.io/mongo:4.4
+    container_name: hitch-onekey-mongo4
+    restart: always
     ports:
       - "9207:27017"
-    networks:  
+    networks:
       - hitch-onekey-net
 
-  hitch-onekey-backend:  
+  hitch-onekey-backend:
     image: hitch-allinone:1.0-SNAPSHOT
-    container_name: hitch-onekey-backend  
-    restart: always 
-    ports:  
-      - "9201:8080"
+    container_name: hitch-onekey-backend
+    restart: always
+    ports:
+      - "9208:8080"
     links:
       - hitch-onekey-mysql
       - hitch-onekey-minio
-    depends_on:  
+    depends_on:
       - hitch-onekey-mysql
       - hitch-onekey-minio
     environment:
@@ -98,7 +98,21 @@ services:
       baidu.secretkey: 33fUD7ztZm1v5uBIwiKZFICPIbcXhgju
       baidu.map.ak: MkIZ2ME6zhPNU1o3BnIzq38Vo38WPz8X
       baidu.map.api: https://api.map.baidu.com/routematrix/v2/driving
-    networks:  
+    networks:
+      - hitch-onekey-net
+
+  hitch-onekey-nginx:
+    image: nginx:1.16.1
+    container_name: hitch-onekey-nginx
+    restart: always
+    ports:
+      - "9201:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ../web:/usr/share/nginx/html/web
+    depends_on:
+      - hitch-onekey-backend
+    networks:
       - hitch-onekey-net
 
   hitch-onekey-portainer:
@@ -115,10 +129,10 @@ services:
       - hitch-onekey-net
 
 networks:
-  hitch-onekey-net:  
-    driver: bridge  
-    ipam:  
-      config:  
+  hitch-onekey-net:
+    driver: bridge
+    ipam:
+      config:
         - subnet: 172.19.0.0/24  
 
 
