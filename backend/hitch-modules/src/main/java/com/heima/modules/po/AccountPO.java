@@ -40,7 +40,7 @@ public class AccountPO implements Serializable, PO {
     private String phone;
 
     /**
-     * 角色 乘客：1司机：2
+     * 角色 乘客：0司机：1
      */
     private Integer role;
 
