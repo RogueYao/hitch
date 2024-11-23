@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.heima.storage.mapper.OrderMapper">
-    <resultMap id="BaseResultMap" type="com.heima.modules.po.OrderPO">
+    <resultMap id="BaseResultMap" type="com.yian.modules.po.OrderPO">
         <id column="id" jdbcType="VARCHAR" property="id"/>
         <result column="passenger_id" jdbcType="VARCHAR" property="passengerId"/>
         <result column="passenger_stroke_id" jdbcType="VARCHAR" property="passengerStrokeId"/>
@@ -27,7 +27,7 @@
         from t_order
         where id = #{id,jdbcType=VARCHAR}
     </select>
-    <select id="selectPaidList" parameterType="com.heima.modules.po.OrderPO" resultMap="BaseResultMap">
+    <select id="selectPaidList" parameterType="com.yian.modules.po.OrderPO" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from t_order
@@ -39,7 +39,7 @@
     </select>
 
 
-    <select id="selectList" parameterType="com.heima.modules.po.OrderPO" resultMap="BaseResultMap">
+    <select id="selectList" parameterType="com.yian.modules.po.OrderPO" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from t_order
@@ -76,7 +76,7 @@
     </select>
 
 
-    <select id="selectAvailableList" parameterType="com.heima.modules.po.OrderPO" resultMap="BaseResultMap">
+    <select id="selectAvailableList" parameterType="com.yian.modules.po.OrderPO" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from t_order
@@ -114,7 +114,7 @@
     delete from t_order
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-    <insert id="insert" parameterType="com.heima.modules.po.OrderPO">
+    <insert id="insert" parameterType="com.yian.modules.po.OrderPO">
     insert into t_order (id,passenger_id, passenger_stroke_id, driver_id,
       driver_stroke_id,distance,estimated_time, cost, status,
       REVISION, CREATED_BY, CREATED_TIME, 
@@ -124,7 +124,7 @@
       #{revision,jdbcType=INTEGER}, #{createdBy,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP}, 
       #{updatedBy,jdbcType=VARCHAR}, #{updatedTime,jdbcType=TIMESTAMP})
   </insert>
-    <insert id="insertSelective" parameterType="com.heima.modules.po.OrderPO">
+    <insert id="insertSelective" parameterType="com.yian.modules.po.OrderPO">
         insert into t_order
         <trim prefix="(" suffix=")" suffixOverrides=",">
             id,
@@ -211,7 +211,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="com.heima.modules.po.OrderPO">
+    <update id="updateByPrimaryKeySelective" parameterType="com.yian.modules.po.OrderPO">
         update t_order
         <set>
             <if test="passengerId != null">
@@ -256,7 +256,7 @@
         </set>
         where id = #{id,jdbcType=VARCHAR}
     </update>
-    <update id="updateByPrimaryKey" parameterType="com.heima.modules.po.OrderPO">
+    <update id="updateByPrimaryKey" parameterType="com.yian.modules.po.OrderPO">
     update t_order
     set passenger_id = #{passengerId,jdbcType=VARCHAR},
       passenger_stroke_id = #{passengerStrokeId,jdbcType=VARCHAR},

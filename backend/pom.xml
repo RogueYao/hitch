@@ -23,7 +23,7 @@
     </parent>
 
 
-    <groupId>com.heima</groupId>
+    <groupId>com.yian</groupId>
     <artifactId>hitch</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>

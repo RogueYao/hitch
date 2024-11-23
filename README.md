@@ -1,45 +1,54 @@
-# 1、本地Allinone启动
+# O2O同城顺风车
 
-本地allinone下集成了所有的后台接口及静态页面
+## 测试环境接口：
 
-用于本地启动和调试，直接main方法启动
+###  服务网关： 
 
-访问对应端口即可
+ http://116.62.213.90:10010
 
+###  注册中心： 
 
+ http://116.62.213.90:10011/nacos
 
-
-
-# 2、服务器一键部署与启动
-
-## 1、把代码上传到一台服务器
-
-确保服务器安装了maven 、docker 、docker-compose
-
-修改deploy下的docker-compose.yml里的配置，主要涉及以下几个：（其他不必动）
-
-![image-20240510191150028](README.assets/image-20240510191150028.png)
+###  harbor
+ https://manager-hongbaoyu-java.itheima.net:8443/harbor/projects
+ 
 
 
+###  行程中心-12： 
 
-## 2、到  allinone 下执行
+ http://116.62.213.90:10012/stroke/doc.html#/home
 
-mvn package docker:build
+###  存储中心-1： 
 
+ http://116.62.213.90:10013/storage/doc.html#/home
 
+###  支付中心-9： 
 
-## 3、到deploy下执行
+ http://116.62.213.90:10014/payment/doc.html#/home
 
-docker-compose up -d
+###  订单中心-4： 
 
+ http://116.62.213.90:10015/order/doc.html#/home
 
+###  消息中心-1： 
 
-## 启动后的一些配置：
+ http://116.62.213.90:10016/notice/doc.html#/home
 
-![image-20240510190608861](README.assets/image-20240510190608861.png)
+###  用户中心-12： 
 
+ http://116.62.213.90:10017/account/doc.html#/home
 
+## total:
 
-各服务端口号：
+### 接口:
 
-![image-20240510190843129](README.assets/image-20240510190843129.png)
+39
+
+### 代码:
+
+顺风车
+added lines: 33070, removed lines: 10804, total lines: 22266
+
+total with opencv demo
+added lines: 478179, removed lines: 10814, total lines: 467365

@@ -11,5 +11,7 @@ spring:
         min-idle: 0
 
 baidu:
-  apikey: 3mWHEPREHzAxeCRq3z6xb8bR
-  secretkey: 33fUD7ztZm1v5uBIwiKZFICPIbcXhgju
+  apikey: N2wQVstcLgMxND4C2xmdYJyn
+  secretkey: 7M2clFA8VKCGhCQMrKhLfhLX3Sqn6ToW
+  vehiclelicense_url: https://aip.baidubce.com/rest/2.0/ocr/v1/vehicle_license
+  licenseplate_url: https://aip.baidubce.com/rest/2.0/ocr/v1/license_plate

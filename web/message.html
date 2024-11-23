@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>黑马顺风车</title>
+    <title>o2o顺风车</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css">
@@ -55,9 +55,9 @@
                 function (d) {
                     d.data.forEach(e => {
                         if (e.senderId == current_user.id) {
-                            $('#history').append('<p class="msg1">[你]: ' + e.message + '</p>');
+                            $('#history').append('<p class="msg1">' + e.message + '</p>');
                         } else {
-                            $('#history').append('<p class="msg2">[' + e.senderUseralias + "]: " + e.message + '</p>');
+                            $('#history').append('<p class="msg2">' + e.message + '</p>');
                         }
                     });
                     msg_end.scrollIntoView();
