@@ -1,6 +1,5 @@
 package com.heima.stroke.handler;
 
-import com.alibaba.fastjson.JSON;
 import com.heima.commons.constant.HtichConstants;
 import com.heima.commons.domin.bo.*;
 import com.heima.commons.domin.vo.response.ResponseVO;
@@ -46,7 +45,6 @@ public class StrokeHandler {
 
     @Autowired
     private MQProducer mqProducer;
-
 //    @Resource
 //    private KafkaTemplate<String, Object> kafkaTemplate;
 
@@ -404,6 +402,34 @@ public class StrokeHandler {
         orderPO.setStatus(0);//初始状态：未支付
         //TODO:任务3.1-生成订单-3day
 
+        // String inviteeId = invitee.getId();
+        // orderPO.setPassengerId(inviteeId);//乘客id
+        //
+        // String passengerId = strokeAPIService.selectByPublishID(inviteeId).getId();
+        // orderPO.setPassengerStrokeId(passengerId);//乘客行程ID
+        //
+        // String inviterId = inviter.getId();
+        // orderPO.setDriverId(inviterId);//司机id
+        //
+        // String driverId = strokeAPIService.selectByPublishID(inviterId).getId();
+        // orderPO.setDriverStrokeId(driverId);//司机行程ID
+        // //调百度路径计算两点间的距离，和预估抵达时长
+        // String orgins = inviter.getStartGeoLat()+","+inviter.getStartGeoLng();
+        // String destinations = invitee.getEndGeoLat()+","+invitee.getEndGeoLng();
+        // RoutePlanResultBO routePlanResultBO = baiduMapClient.pathPlanning(orgins, destinations);
+        // if (null != routePlanResultBO) {
+        //     orderPO.setDistance(routePlanResultBO.getDistance().getValue());//路径长度
+        //     orderPO.setEstimatedTime(routePlanResultBO.getDuration().getValue());//预估时长
+        //
+        //     orderPO.setCost(valuation.calculation((float) routePlanResultBO.getDistance().getValue() / 1000));//预估价格
+        // }
+        // orderPO.setCreatedBy(invitee.getCreatedBy());
+        // orderPO.setCreatedTime(new Date());
+        // orderPO.setUpdatedBy(invitee.getCreatedBy());
+        // orderPO.setUpdatedTime(new Date());
+        //
+        // orderAPIService.add(orderPO);
+
         //注意传入的两个参数，包含了下面想要的信息：
 
         //3.1 给orderPo设置基本的乘客、车主、行程信息
@@ -414,8 +440,24 @@ public class StrokeHandler {
         //3.3 完成计费功能，给orderPo设置金额
         //计费规则：3公里以内起步价13元；3公里以上2.3元/公里；燃油附加费1次收取1元
         //建议：使用装饰着模式来完成
+        orderPO.setDriverStrokeId(inviter.getId());
+        orderPO.setDriverId(inviter.getPublisherId());
+        orderPO.setPassengerStrokeId(invitee.getId());
+        orderPO.setPassengerId(invitee.getPublisherId());
+        orderPO.setCreatedBy(invitee.getCreatedBy());
+        orderPO.setCreatedTime(new Date());
+        orderPO.setUpdatedBy(invitee.getCreatedBy());
+        orderPO.setUpdatedTime(new Date());
 
-
+        //批量算路服务
+        String start = invitee.getStartGeoLat() + "," + invitee.getStartGeoLng();
+        String end = invitee.getEndGeoLat() + "," + invitee.getEndGeoLng();
+        RoutePlanResultBO resultBO = baiduMapClient.pathPlanning(start, end);
+        if (null != resultBO) {
+            orderPO.setDistance(resultBO.getDistance().getValue());
+            orderPO.setEstimatedTime(resultBO.getDuration().getValue());
+            orderPO.setCost(valuation.calculation(orderPO.getDistance()/1000));
+        }
         orderAPIService.add(orderPO);
     }
 

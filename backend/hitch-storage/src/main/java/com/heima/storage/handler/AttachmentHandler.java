@@ -8,21 +8,14 @@ import com.heima.modules.po.AttachmentPO;
 import com.heima.storage.configuration.MinioConfig;
 import com.heima.storage.mapper.AttachmentMapper;
 import io.minio.MinioClient;
-import io.minio.errors.*;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.util.Date;
 
 @Component
 public class AttachmentHandler {

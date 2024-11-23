@@ -39,13 +39,47 @@ public class ScheduledTask {
         //定时调度，获取mongodb里的未读消息，推送给对应用户
         executorService.scheduleAtFixedRate(() -> {
             //获取所有在线的用户accountId，提示：WebSocketServer里有用户链接的池子
-
+            Set<String> strings = WebSocketServer.sessionPools.keySet();
             //在MongoDB中获取需要推送的消息，noticeService里的方法研究一下，可以帮到你
-
+            List<NoticePO> noticeByAccountIds = noticeService.getNoticeByAccountIds(new ArrayList<>(strings));
             //遍历所有消息，逐个发送消息到浏览器
             //方法：session.getBasicRemote().sendText(json);
+            for (NoticePO noticePO : noticeByAccountIds) {
+                Session session = WebSocketServer.sessionPools.get(noticePO.getReceiverId());
+                if (session != null && session.isOpen()) {
+                    try {
+                        String json = JSON.toJSONString(noticePO);
+                        session.getBasicRemote().sendText(json);
+                    } catch (IOException e) {
+                        logger.error("Failed to send message to user: {}", noticePO.getReceiverId(), e);
+                    }
+                }else {
+                    logger.error("Failed to send message to user: {}", noticePO.getReceiverId());
+                }
+            }
 
         }, 0,1 , TimeUnit.SECONDS);
     }
-
+    // private void pushUnreadMessages() {
+    //     // 获取所有在线的用户accountId
+    //     Map<String, Session> onlineSessions = WebSocketServer.getOnlineSessions();
+    //     Set<String> accountIds = onlineSessions.keySet();
+    //
+    //     // 在MongoDB中获取需要推送的消息
+    //     List<Notice> unreadNotices = noticeService.getUnreadNotices(accountIds);
+    //
+    //     // 遍历所有消息，逐个发送消息到浏览器
+    //     for (Notice notice : unreadNotices) {
+    //         String accountId = notice.getAccountId();
+    //         Session session = onlineSessions.get(accountId);
+    //         if (session != null && session.isOpen()) {
+    //             try {
+    //                 String json = new ObjectMapper().writeValueAsString(notice);
+    //                 session.getBasicRemote().sendText(json);
+    //             } catch (IOException e) {
+    //                 logger.error("Failed to send message to user: {}", accountId, e);
+    //             }
+    //         }
+    //     }
+    // }
 }

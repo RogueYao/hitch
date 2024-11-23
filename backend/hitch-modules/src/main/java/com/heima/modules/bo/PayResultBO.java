@@ -1,6 +1,5 @@
 package com.heima.modules.bo;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**

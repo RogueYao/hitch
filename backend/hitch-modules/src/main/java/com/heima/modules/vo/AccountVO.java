@@ -2,7 +2,6 @@ package com.heima.modules.vo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.heima.commons.constant.HtichConstants;
 import com.heima.commons.domin.vo.VO;
 import com.heima.commons.enums.InitialResolverType;
 import com.heima.commons.groups.Group;

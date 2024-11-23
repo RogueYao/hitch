@@ -18,15 +18,11 @@ import com.heima.modules.po.VehiclePO;
 import com.heima.modules.vo.AccountVO;
 import com.heima.modules.vo.AuthenticationVO;
 import com.heima.modules.vo.VehicleVO;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.io.File;
-import java.net.URL;
 
 @Component
 public class AccountHandler {
@@ -84,7 +80,17 @@ public class AccountHandler {
      */
     public ResponseVO<AccountVO> modifyPassword(AccountVO accountVO) {
         //获取当前登录用户的id
-        String userid = accountVO.getCurrentUserId();
+        String userId = accountVO.getCurrentUserId();
+
+        AccountPO accountPO = accountAPIService.getAccountByID(userId);
+        if (!accountPO.getPassword().equals(CommonsUtils.encodeMD5(accountVO.getPassword())))
+            throw new BusinessRuntimeException(BusinessErrors.DATA_STATUS_ERROR, "原密码错误");
+
+        if (accountPO.getPassword().equals(CommonsUtils.encodeMD5(accountVO.getNewPassword())))
+            throw new BusinessRuntimeException(BusinessErrors.DATA_STATUS_ERROR, "新密码不能与原密码相同");
+
+        accountPO.setPassword(CommonsUtils.encodeMD5(accountVO.getNewPassword()));
+        accountAPIService.update(accountPO);
         //TODO:任务1-修改密码-1day
         //获取当前用户在数据库里的信息
         //旧密码加密，对比数据库，防止输入错误
@@ -187,7 +193,7 @@ public class AccountHandler {
             throw new BusinessRuntimeException(BusinessErrors.DATA_NOT_EXIST, "身份证正面照片不存在");
         }
 
-        //TODO:任务2.2-个人实名认证（选做）
+        //TODO:任务2.2-个人实名认证
         //【可选作业】：调百度完成身份证识别，将识别信息更新到数据库对应字段
         //文档（身份证识别）：https://cloud.baidu.com/doc/OCR/s/rk3h7xzck
         //文档（h5人脸实名认证接口）：https://ai.baidu.com/ai-doc/FACE/skxie72kp

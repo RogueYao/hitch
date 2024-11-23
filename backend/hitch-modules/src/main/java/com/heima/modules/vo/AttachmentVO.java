@@ -1,6 +1,5 @@
 package com.heima.modules.vo;
 
-import com.heima.commons.domin.po.PO;
 import com.heima.commons.domin.vo.VO;
 import com.heima.commons.enums.InitialResolverType;
 import com.heima.commons.groups.Group;
@@ -8,7 +7,6 @@ import com.heima.commons.initial.annotation.InitialResolver;
 import com.heima.modules.po.AttachmentPO;
 
 import javax.validation.constraints.NotEmpty;
-import java.io.Serializable;
 import java.util.Date;
 
 public class AttachmentVO implements VO {

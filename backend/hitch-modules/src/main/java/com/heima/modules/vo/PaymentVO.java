@@ -10,7 +10,6 @@ import com.heima.modules.po.PaymentPO;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
-import java.io.Serializable;
 import java.util.Date;
 
 public class PaymentVO implements VO {

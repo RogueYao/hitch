@@ -1,14 +1,11 @@
 package com.heima.commons.helper;
 
-import com.heima.commons.constant.HtichConstants;
 import com.heima.commons.entity.SessionContext;
 import com.heima.commons.template.SessionTemplate;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ScanOptions;
-import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.Map;

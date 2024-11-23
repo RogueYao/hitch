@@ -3,8 +3,6 @@ package com.heima.storage.mapper;
 
 import com.heima.modules.po.AccountPO;
 
-import java.util.List;
-
 public interface AccountMapper {
     int deleteByPrimaryKey(String id);
 

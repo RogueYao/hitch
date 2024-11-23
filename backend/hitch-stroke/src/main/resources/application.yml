@@ -49,8 +49,8 @@ spring:
       database: location
 baidu:
   map:
-    ak: MkIZ2ME6zhPNU1o3BnIzq38Vo38WPz8X
-    api: https://api.map.baidu.com/routematrix/v2/driving
+    ak: siduZgE6XlavzaMIBoRUuEjKTY50qQPq
+    api: https://api.map.baidu.com/routematrix/v2/driving?
 
 #logging:
 #  level:

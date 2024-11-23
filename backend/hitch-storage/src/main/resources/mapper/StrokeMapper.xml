@@ -61,6 +61,13 @@
         </where>
         order by departure_time desc
     </select>
+    <select id="selectByPublishId" resultType="com.heima.modules.po.StrokePO" >
+        select
+        <include refid="Base_Column_List"></include>
+        from t_stroke
+        where
+        publisher_id=#{publisher_id,jdbcType=VARCHAR}
+    </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from t_stroke

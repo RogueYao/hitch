@@ -1,7 +1,6 @@
 package com.heima.account.service;
 
 import com.heima.modules.po.AccountPO;
-import com.heima.modules.po.OrderPO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;

@@ -1,7 +1,6 @@
 package com.heima.modules.po;
 
 import com.heima.commons.domin.po.PO;
-import com.heima.commons.domin.vo.VO;
 import com.heima.modules.vo.VehicleVO;
 
 import java.io.Serializable;

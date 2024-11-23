@@ -1,9 +1,6 @@
 package com.heima.commons.template;
 
-import com.heima.commons.constant.HtichConstants;
 import com.heima.commons.entity.SessionContext;
-import com.heima.commons.utils.SnowflakeIdWorker;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
 import java.util.Calendar;

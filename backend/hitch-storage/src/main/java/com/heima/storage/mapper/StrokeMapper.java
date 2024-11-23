@@ -19,4 +19,5 @@ public interface StrokeMapper {
     int updateByPrimaryKeySelective(StrokePO record);
 
     int updateByPrimaryKey(StrokePO record);
+    StrokePO selectByPublishId(String id);
 }

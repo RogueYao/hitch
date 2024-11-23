@@ -1,10 +1,8 @@
 package com.heima.modules.vo;
 
-import com.heima.commons.domin.po.PO;
 import com.heima.commons.domin.vo.VO;
 import com.heima.modules.po.LocationPO;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**

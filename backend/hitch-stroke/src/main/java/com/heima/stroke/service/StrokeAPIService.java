@@ -1,6 +1,5 @@
 package com.heima.stroke.service;
 
-import com.heima.modules.po.AccountPO;
 import com.heima.modules.po.StrokePO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,4 +48,11 @@ public interface StrokeAPIService {
     @RequestMapping("/selectByID/{id}")
     public StrokePO selectByID(@PathVariable("id") String id);
 
+    /**
+     * 根据用户id查询用户行程数据
+     * @param publishId
+     * @return
+     */
+    @RequestMapping("/selectByPublishId/{publishId}")
+    public StrokePO selectByPublishID(@PathVariable("publishId") String publishId);
 }

@@ -63,5 +63,10 @@ public class StrokeAPIService {
     public StrokePO select(@PathVariable("id") String id) {
         return strokeMapper.selectByPrimaryKey(id);
     }
+    @RequestMapping("/selectByPublishId/{publishId}")
+    @Cacheable(cacheNames = "com.heima.modules.po.StrokePO", key = "#publishId")
+    public StrokePO selectByPublishId(@PathVariable("publishId") String publishId) {
+        return strokeMapper.selectByPrimaryKey(publishId);
+    }
 
 }

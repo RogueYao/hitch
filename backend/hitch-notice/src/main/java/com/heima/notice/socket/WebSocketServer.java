@@ -1,10 +1,12 @@
 package com.heima.notice.socket;
 
 
+import com.alibaba.fastjson.JSON;
 import com.heima.commons.constant.HtichConstants;
 import com.heima.commons.entity.SessionContext;
 import com.heima.commons.helper.RedisSessionHelper;
 import com.heima.commons.utils.SpringUtil;
+import com.heima.modules.vo.NoticeVO;
 import com.heima.notice.handler.NoticeHandler;
 import org.springframework.stereotype.Component;
 
@@ -24,16 +26,20 @@ public class WebSocketServer {
     //key是accountId，可以通过本类中的getAccountId方法获取到，value是session
     public final static Map<String, Session> sessionPools = new ConcurrentHashMap<>();
 
+
     /*
-        用户发送ws消息，message为json格式{'receiverId':'接收人','tripId':'行程id','message':'消息内容'}
+        用户发送ws消息，'message为json格式{'receiverId':'接收人','tripId':'行程id',message':'消息内容'}
     */
     @OnMessage
     public void onMessage(Session session, String message) {
         String accountId = getAccountId(session);
-
         NoticeHandler noticeHandler = SpringUtil.getBean(NoticeHandler.class);
         //设置相关消息内容并存入mongodb：noticeHandler.saveNotice(noticeVO);
-
+        if (!message.isEmpty()) {
+            NoticeVO noticeVO = JSON.parseObject(message, NoticeVO.class);
+            noticeVO.setSenderId(accountId);
+            noticeHandler.saveNotice(noticeVO);
+        }
 
     }
 
@@ -46,7 +52,10 @@ public class WebSocketServer {
      */
     @OnOpen
     public void onOpen(Session session) {
-
+        String accountId = getAccountId(session);
+        if (null != accountId) {
+            sessionPools.put(accountId, session);
+        }
     }
 
     /**
@@ -56,7 +65,10 @@ public class WebSocketServer {
      */
     @OnClose
     public void onClose(Session session) {
-
+        String accountId = getAccountId(session);
+        if (null != accountId) {
+            sessionPools.remove(accountId);
+        }
     }
 
 
