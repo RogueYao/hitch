@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>黑马顺风车</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../css/jquery.mobile-1.4.5.min.css">
+    <script src="../js/jquery-1.11.3.min.js"></script>
+    <script src="../js/jquery.mobile-1.4.5.min.js"></script>
+    <link rel="stylesheet" href="../css/common.css" />
+    <script src="../js/common.js"></script>
+
+
+    <script>
+
+
+
+        var i;
+        var lng = 116.404000;
+        var lat = 39.915000;
+
+        var sendPoint = function() {
+            lng = Math.round(lng * 1000000 + Math.ceil(Math.random() * 100)) / 1000000;
+            lat = Math.round(lat * 1000000 + Math.ceil(Math.random() * 100)) / 1000000;
+            var driverTripId = $('#tripId').val();
+            $.ajax({
+                type: "POST",
+                url: "/stroke/api/realtimeLocation",
+                cache: false,
+                data: JSON.stringify({
+                    trapId: driverTripId,
+                    lng: lng,
+                    lat: lat
+                }),
+                success: function (d) {
+                    console.log(d);
+                }
+            });
+            $('#pageone').prepend('<p>' + driverTripId + '  :  ' + lng + ' , ' + lat + '</p>');
+        }
+
+        $(function () {
+            $('#go').click(sendPoint);
+
+            $('#go2').click(function () {
+
+                i = setInterval(sendPoint, 1000);
+
+            });
+
+            $('#stop').click(function () {
+                clearInterval(i);
+            })
+
+            $('#tripId').focus(function () {
+                $(this).val('')
+            })
+
+        })
+
+
+
+
+    </script>
+
+</head>
+
+<body>
+
+    <h2>mock模拟司机坐标移动</h2>
+    <input id="tripId" placeholder="输入司机行程id">
+    <button id="go" style="display: inline; width: 150px;">手动移动</button>
+    <button id="go2" style="display: inline; width: 150px;">自动移动</button>
+    <button id="stop" style="display: inline; width: 150px;">停止</button>
+
+    <div id="pageone">
+    </div>
+</body>
+
+</html>

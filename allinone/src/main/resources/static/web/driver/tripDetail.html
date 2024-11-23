@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>黑马顺风车</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../css/jquery.mobile-1.4.5.min.css">
+    <script src="../js/jquery-1.11.3.min.js"></script>
+    <script src="../js/jquery.mobile-1.4.5.min.js"></script>
+    <link rel="stylesheet" href="../css/common.css" />
+    <script type="text/javascript" src="../js/common.js"></script>
+    <script>
+        //本行程的开始时间
+        var tripTime = '';
+        var reqList = [];
+
+
+
+        $(function () {
+            //本行程详情
+            $.ajax({
+                type: "POST",
+                url: "/stroke/api/detail/" + getParam('id'),
+                cache: false,
+                data: null,
+                async: false,
+                success: function (data) {
+                    var d = data.data[0];
+                    $('#tripId').val(d.id);
+                    $('#time').text(transDate(d.departureTime));
+                    tripTime = d.departureTime;
+                    $('#from').text('从：' + d.startAddr);
+                    $('#to').text('到：' + d.endAddr);
+                },
+                error: function () {
+
+                }
+            });
+            //我邀请的
+            $.ajax({
+                type: "POST",
+                cache: false,
+                data: null,
+                async: false,
+                url:"/stroke/api/invite/list/" + getParam('id'),
+                success:function (d) {
+                    console.log(d);
+                    for (i in d.data) {
+                        var dd = d.data[i];
+                        reqList.push(dd.id);
+                    }
+                }
+            });
+
+            //顺路的乘客
+            $.ajax({
+                type: "POST",
+                url: "/stroke/api/itinerary/list",
+                cache: false,
+                data: JSON.stringify({ id: getParam('id') }),
+                success: function (d) {
+                    $('#defaultpanel').append('<li style="color:darkgoldenrod">顺路的乘客：</li>')
+                    for (var i in d.data) {
+                        var item = d.data[i];
+                        item.tags='';
+                        if(reqList.includes(item.id)){
+                            item.tags += '【邀请过】';
+                        }
+                        if(item.quickConfirm == 1){
+                            item.tags += '【闪电确认】';
+                        }
+                        item.diffDate = diffDate(tripTime, item.departureTime);
+                        item.suitability = parseFloat(item.suitability).toFixed(2);
+                        renderByTemplate("#defaultpanel",'#template',item);
+                    }
+                    $("#defaultpanel").listview('refresh')
+                        .find('li').removeClass('ui-first-child').removeClass('ui-last-child'); //不删掉这个class最后一个的头像圆角有问题
+                }
+            });
+
+
+        })
+        function confirmCallBack(id) {
+            var user = getUser();
+            $.post('/stroke/api/invite', '{"inviterTripId": "' + $('#tripId').val() + '","inviteeTripId": "' + id + '"}',
+                function (d) {
+                    showMsg(d.message);
+                    toUrl('tripDetail.html?id=' + getParam('id'), 1000);
+                }
+            )
+        }
+        function letsGo(){
+            $.post('/stroke/api/departure/'+getParam('id'),
+                function (d) {
+                    showMsg(d.message);
+                    toUrl('tripConfirmed.html?id=' + getParam('id'), 1000);
+                }
+            )
+        }
+    </script>
+</head>
+
+<body>
+    <div id="template" style="display: none;">
+        <li><a data-ajax="false" href="../message.html?t={inviteeTripId}"><img class="person-img" src="{avatar}"
+                    style="width:70px;height:70px;margin-top:25px;margin-left:10px;">
+                <h2>{useralias}<span style="color:darkgoldenrod">&nbsp;&nbsp;{suitability}%顺路</span></h2>
+                <p><span>{startAddr}</span> <span style="color:darkgoldenrod">{startDistance} km</span></p>
+                <p><span>{endAddr}</span> <span style="color:darkgoldenrod">{endDistance} km</span></p>
+                <p><span>时间相差：</span><span style="color:darkgoldenrod">&nbsp;&nbsp;{diffDate}</span></p>
+                <p><span style="color:green">{tags}</span></p>
+            </a>
+            <a href="#myPopupDialog" data-icon="heart" data-rel="popup" data-position-to="window" data-mini="true"
+                data-inline="true" data-transition="fade" onclick="confirmInfo('{id}','邀请他同行吗？')"></a>
+        </li>
+    </div>
+
+    <div data-role="page" id="pageone" class="bg-img">
+        <div data-role="header" data-position="fixed" data-tap-toggle="false">
+            <a href="#" data-rel="back"
+                class="ui-btn ui-btn-inline ui-icon-arrow-l ui-btn-icon-notext ui-corner-all">使用圆圈（默认）</a>
+            <h1>司机端 - 行程详情</h1>
+        </div>
+        <div style="margin-top:120px;"></div>
+
+        <div id="trapDetail" class="ui-content2" style="padding:15px;">
+            <input id="tripId" type="hidden" />
+            <h2 style="color:dodgerblue;text-align: center;">未出发，拼单中……</h2>
+            <!-- <h3 id="time"></h3> -->
+            <p id="from"></p>
+            <p id="to"></p>
+            <p style="text-align:right">
+                <a href="javascript:toUrl('tripReq.html?id='+getParam('id'))" data-ajax='false'
+                    style="text-decoration: none;">我邀请的&gt;&gt;</a>
+            </p>
+            <p><button onclick="letsGo()">出发！</button></p>
+        </div>
+
+        <div style="border:1px solid #ccc; margin: 15px;">
+            <ul data-role="listview" data-inset="true" id="defaultpanel">
+
+            </ul>
+        </div>
+
+
+        <div style="margin-bottom:20px;"></div>
+        <div data-role="footer" data-position="fixed" data-tap-toggle="false">
+            <div data-role="navbar" style="margin: 0;">
+                <ul>
+                    <li><a href="javascript:location.href='user.html'" data-icon="home">首页</a></li>
+                    <li><a href="javascript:location.href='trip.html'" data-icon="grid" class="ui-btn-active">我的行程</a>
+                    </li>
+                    <li><a href="javascript:location.href='order.html'" data-icon="bullets">我的订单</a></li>
+                    <li><a href="javascript:location.href='../common/userCenter.html'" data-icon="user">个人中心</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,28 @@
+<head>
+    <title>ws</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="../js/jquery-1.11.3.min.js"></script>
+    <script>
+        var ws = new WebSocket('ws://localhost:8080/test3');
+        $(function(){
+
+            $('#send').click(function(){
+                ws.send(new Date().getTime());
+            })
+
+        })
+
+        ws.onmessage = function(event){
+            console.log(event.data);
+        }
+        
+    </script>
+
+</head>
+<body>
+
+<button id="send">发送</button>
+
+
+</body>

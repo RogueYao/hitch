@@ -1,0 +1,21 @@
+<head>
+    <title>ajax短轮询</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="../js/jquery-1.11.3.min.js"></script>
+    <script>
+        setInterval(() => {
+            $.get('/test1',function(data){
+                console.log(data);
+            })
+        }, 5000);
+        
+    </script>
+
+</head>
+<body>
+
+
+
+
+</body>

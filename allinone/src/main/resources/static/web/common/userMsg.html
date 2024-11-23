@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>o2o顺风车</title>
+    <title>黑马顺风车</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="../css/jquery.mobile-1.4.5.min.css">
@@ -19,7 +19,7 @@
 
         table .h {
             width: 100px;
-            height: 50px;
+            height: 35px;
             font-weight: bold;
         }
 
@@ -28,85 +28,86 @@
             height: 100%;
             max-height: 180px;
         }
-        .ui-icon-carat-r {
-            line-height:20px;
+
+        .p {
+            height: 30px;
+            line-height: 25px;
         }
     </style>
     <script>
         $(function () {
-
-            $('.person-img').attr('src',current_user.avatar);
+            $('.person-img').attr('src', current_user.avatar);
             $('#driverName').text((current_user.useralias == '') ? current_user.username : current_user.useralias);
             $('#valid').text((current_user.status == 1) ? '已完成' : '未完成');
             $('#driver').text((current_user.role == 1) ? '已完成' : '未完成');
 
+            $('.person-img').attr('src', current_user.avatar);
+            $('#driverName').text((current_user.useralias == '') ? current_user.username : current_user.useralias);
+
+            var e = JSON.parse(localStorage.getItem('_msg'));
+            if(e != null){
+                e.forEach(element => {
+                    renderByTemplate('#defaultpanel', '#template', element);
+                });
+            }
+
+            $('li').removeClass('ui-first-child').removeClass('ui-last-child');
+
             var roleName = (localStorage.getItem('current_role') == '0' ? 'user' : 'driver');
-            $('.role').each(function(){
-                $(this).attr('href','../'+roleName+'/'+$(this).attr('href'));
+            $('.role').each(function () {
+                $(this).attr('href', '../' + roleName + '/' + $(this).attr('href'));
             });
-            $('li').removeClass('ui-first-child');
         })
-        function logout() {
-            localStorage.clear();
-            //localStorage.removeItem('SESSION_TOKEN_KEY'); //退出不清空其他信息，那么其他人登录会串，但是能保留聊天数据等信息
-            toUrl('/web/login.html');
+
+        function delMsg(id,msgTxt){
+            var msg = JSON.parse(localStorage.getItem('_msg'));
+            var newMsg = [];
+            msg.forEach(e => {
+                if(e.senderId == id && e.message == msgTxt){
+                    //删除
+                    console.log(['delete',e]);
+                }else{
+                    newMsg.push(e);
+                }
+            });
+            localStorage.setItem('_msg',JSON.stringify(newMsg));
+            location.reload();
         }
     </script>
 </head>
 
 <body>
-    <div id="template" style="display: none;">
-        
-    </div>
 
     <div data-role="page" id="pageone">
         <div data-role="header" data-position="fixed" data-tap-toggle="false">
-            <h1>个人中心</h1>
+            <a href="#" data-rel="back"
+                class="ui-btn ui-btn-inline ui-icon-arrow-l ui-btn-icon-notext ui-corner-all">使用圆圈（默认）</a>
+            <h1>我的消息</h1>
         </div>
         <ul data-role="listview" data-inset="true" id="defaultpanel" style="margin:15px;">
             <li>
                 <a href="#" class="ui-btn"
                     style="border-top-left-radius: 5px; border-top-right-radius: 5px; background-color:#ddd;">
-                    <img class="person-img" src=""
-                        style="width:70px;height:70px;margin-top:25px;margin-left:10px;">
+                    <img class="person-img" src="" style="width:70px;height:70px;margin-top:25px;margin-left:10px;">
                     <h2 id="driverName" id="useralias"></h2>
                     <p></p>
-                    <p><span>实名认证：</span> <span style="color:darkgoldenrod" id="valid">未完成</span></p>
+                    <p><span>实名认证：</span> <span style="color:darkgoldenrod" id="valid"></span></p>
                     <p></p>
-                    <p><span>车主认证：</span> <span style="color:darkgoldenrod" id="driver">已完成</span></p>
+                    <p><span>车主认证：</span> <span style="color:darkgoldenrod" id="driver"></span></p>
                 </a>
             </li>
-            <li>
-                <a data-ajax="false" href="javascript:toUrl('alterPwd.html')">修改密码</a>
-            </li>
-            <li>
-                <a data-ajax="false" href="javascript:toUrl('alterPhoto.html')">修改头像</a>
-            </li>
-            <li>
-                <a data-ajax="false" href="javascript:toUrl('alterPaycode.html')">收款码</a>
-            </li>
-            <li>
-                <a data-ajax="false" href="javascript:toUrl('userEdit.html')">完善资料</a>
-            </li>
-            <li>
-                <a data-ajax="false" href="javascript:toUrl('carInfo.html')">车辆信息</a>
-            </li>
-            <li>
-                <a data-ajax="false" href="javascript:toUrl('userVerify.html')">实名认证</a>
-            </li>
-            <li>
-                <a data-ajax="false" href="javascript:toUrl('carVerify.html')">车主认证</a>
-            </li>
-            <li>
-                <a data-ajax="false" href="javascript:toUrl('accountInfo.html')">行程统计</a>
-            </li>
-            <li>
-                <a data-ajax="false" href="javascript:toUrl('userMsg.html')">我的消息</a>
-            </li>
-            <li>
-                <a data-ajax="false" href="javascript:logout();">退出登录</a>
-            </li>
+
         </ul>
+        <div id="template" style="display:none;">
+            <li class="ui-li-has-alt">
+                <a data-ajax="false" href="../message.html?r={senderId}" class="ui-btn">
+                    <p><b>【{senderUseralias}】</b>&nbsp;&nbsp;<span style="color: darkgoldenrod;">{message}</span></p>
+                </a>
+                <a href="#" data-mini="true" data-inline="true"
+                    onclick="delMsg('{senderId}','{message}')"
+                    class="ui-btn ui-btn-icon-notext ui-icon-delete" title=""></a>
+            </li>
+        </div>
         <div data-role="footer" data-position="fixed" data-tap-toggle="false">
             <div data-role="navbar" style="margin: 0;" id="footerLink">
                 <ul>
@@ -117,7 +118,6 @@
                 </ul>
             </div>
         </div>
-
     </div>
 
 </body>

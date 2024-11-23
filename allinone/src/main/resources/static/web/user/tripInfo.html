@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>黑马顺风车</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../css/jquery.mobile-1.4.5.min.css">
+    <script src="../js/jquery-1.11.3.min.js"></script>
+    <script src="../js/jquery.mobile-1.4.5.min.js"></script>
+    <link rel="stylesheet" href="../css/common.css" />
+    <script type="text/javascript" src="../js/common.js"></script>
+    <script>
+
+
+        
+
+        $(function(){
+            //本行程详情
+            $.ajax({
+                type : "POST",
+                url  : "/stroke/api/detail/"+getParam('id'),
+                cache : false,
+                async:false,
+                data : null,
+                success : function(data){
+                    var d = data.data[0];
+                    d.time = transDate(d.departureTime);
+                    d.statusName = tripStatus[d.status];
+                    renderByTemplate('#trapDetail','#template',d); 
+                                
+                },
+                error : function(){
+                    
+                }
+            });
+
+        })
+    </script>
+</head>
+<body>
+    <div id="template" style="display: none;">
+        <input id="tripId" type="hidden" value="{id}"/>
+        <h2 style="color:green;text-align: center;">乘客端 - 行程详情</h2>
+        <h3 id="time" style="color: brown;">出发时间：{time}</h3>
+        <p id="from">从：{startAddr}</p>
+        <p id="to">到：{endAddr}</p>
+        <p id="cost">状态：{statusName}</p>
+        <p style="text-align: right;"><a href="#" data-role="button" data-inline="true" data-rel="back">知道了！</a></p>
+    
+    </div>
+
+<div data-role="page" id="pageone" class="bg-img">
+    <div data-role="header" data-position="fixed" data-tap-toggle="false">
+        <a href="#" data-rel="back" class="ui-btn ui-btn-inline ui-icon-arrow-l ui-btn-icon-notext ui-corner-all">使用圆圈（默认）</a>
+        <h1>乘客端 - 行程详情</h1>
+    </div>
+    <div style="margin-top:120px;"></div>
+
+    <div id="trapDetail" class="ui-content2" style="padding:20px;line-height: 30px;">
+    </div>
+
+
+    <div style="margin-bottom:20px;"></div>
+    <div data-role="footer" data-position="fixed" data-tap-toggle="false">
+        <div data-role="navbar" style="margin: 0;">
+            <ul>
+                <li><a href="javascript:location.href='user.html'" data-icon="home">首页</a></li>
+                <li><a href="javascript:location.href='trip.html'" data-icon="grid" class="ui-btn-active">我的行程</a></li>
+                <li><a href="javascript:location.href='order.html'" data-icon="bullets">我的订单</a></li>
+                <li><a href="javascript:location.href='../common/userCenter.html'" data-icon="user">个人中心</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

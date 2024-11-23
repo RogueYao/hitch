@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>黑马顺风车</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../css/jquery.mobile-1.4.5.min.css">
+    <script src="../js/jquery-1.11.3.min.js"></script>
+    <script src="../js/jquery.mobile-1.4.5.min.js"></script>
+    <link rel="stylesheet" href="../css/common.css" />
+    <script type="text/javascript" src="../js/common.js"></script>
+    <script>
+        var currentTrip;
+        $(function () {
+
+            //我邀请的
+            $.ajax({
+                type: "POST",
+                url: "/stroke/api/invite/list/"+getParam('id'),
+                cache: false,
+                data: null,
+                success: function (data) {
+                    var d = data.data;
+                    var template = $('#template').html();
+                    var sn = {'0':'未确认','1':'已确认','2':'已拒绝','3':'已超时'}
+                    for (i in d) {
+                        var c = d[i];
+                        c.statusName = sn[c.status];
+                        var t = template.format(c);
+                        $('#defaultpanel').append(t);
+                    }
+                    $('#defaultpanel').listview('refresh')
+                    .find('li').removeClass('ui-first-child').removeClass('ui-last-child');
+                },
+                error: function () {
+
+                }
+            });
+
+        })
+
+    </script>
+</head>
+
+<body>
+
+    <div id="template" style="display:none;">
+        <li>
+            <a data-ajax="false" href="../message.html?t={inviteeTripId}" class="ui-btn">
+                    <img class="person-img" src="{avatar}" 
+                        style="width:70px;height:70px;margin-top:25px;margin-left:10px;">
+                    <h2 id="driverName">
+                        <span>{useralias}</span>
+                    </h2>
+                    <!-- <p><span>行程匹配：</span> <span style="color:darkgoldenrod" id="tripRatio">{ratio}</span></p> -->
+                    <p><span>从：</span> <span style="color:darkgoldenrod" id="cost">{startAddr}</span></p>
+                    <p><span>到：</span> <span style="color:darkgoldenrod" id="cost">{endAddr}</span></p>
+                    <p style="text-align:right;">{statusName}</p>
+            </a>  
+        </li>
+
+    </div>
+
+    <div data-role="page" id="pageone" class="bg-img">
+        <div data-role="header" data-position="fixed" data-tap-toggle="false">
+            <a href="#" data-rel="back"
+                class="ui-btn ui-btn-inline ui-icon-arrow-l ui-btn-icon-notext ui-corner-all">使用圆圈（默认）</a>
+            <h1>司机端 - 邀请信息</h1>
+        </div>
+        <div style="margin-top:120px;"></div>
+
+        <div id="trapDetail" class="ui-content2" style="padding:15px;">
+            <input id="tripId" type="hidden" />
+            <h2 style="color:goldenrod">我的邀请记录</h2>
+            <p>您可以点击联系乘客，随时聊天沟通出行</p>
+
+        </div>
+
+        <div id="driverDetail" class="ui-content2">
+            <ul data-role="listview" data-inset="true" id="defaultpanel">
+            </ul>
+        </div>
+
+
+        <div style="margin-bottom:20px;"></div>
+        <div data-role="footer" data-position="fixed" data-tap-toggle="false">
+            <div data-role="navbar" style="margin: 0;">
+                <ul>
+                    <li><a href="javascript:location.href='user.html'" data-icon="home">首页</a></li>
+                    <li><a href="javascript:location.href='trip.html'" data-icon="grid" class="ui-btn-active">我的行程</a>
+                    </li>
+                    <li><a href="javascript:location.href='order.html'" data-icon="bullets">我的订单</a></li>
+                    <li><a href="javascript:location.href='../common/userCenter.html'" data-icon="user">个人中心</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

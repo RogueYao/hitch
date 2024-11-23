@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>黑马顺风车</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css">
+    <script src="js/jquery-1.11.3.min.js"></script>
+    <script src="js/jquery.mobile-1.4.5.min.js"></script>
+    <link rel="stylesheet" href="css/common.css" />
+    <script type="text/javascript" src="js/common.js"></script>
+    <style>
+        /* 发送消息样式 */
+        .msg1 {
+            padding: 10px;
+            -moz-border-radius: 10px;
+            -webkit-border-radius: 10px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            background-color: skyblue;
+            color: #333;
+            width: 85%;
+            float: right;
+        }
+
+        /* 接受消息样式 */
+        .msg2 {
+            padding: 10px;
+            -moz-border-radius: 10px;
+            -webkit-border-radius: 10px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            background-color: lightgray;
+            color: #333;
+            width: 85%;
+            float: left;
+        }
+    </style>
+    <script>
+
+        // websocket.onmessage = function (event) {
+        //     $('#history').append('<p class="msg2">'+event.data+'</p>');
+        //     msg_end.scrollIntoView();
+        // }
+
+
+
+        $(function () {
+            $.post('/notice/api/list',
+                JSON.stringify({
+                    'receiverId': getParam('r'), //优先级1
+                    'tripId': getParam('t'), //优先级2，如果1没有，按这个查出当前reciver
+                }),
+                function (d) {
+                    d.data.forEach(e => {
+                        if (e.senderId == current_user.id) {
+                            $('#history').append('<p class="msg1">[你]: ' + e.message + '</p>');
+                        } else {
+                            $('#history').append('<p class="msg2">[' + e.senderUseralias + "]: " + e.message + '</p>');
+                        }
+                    });
+                    msg_end.scrollIntoView();
+                }
+            );
+            //模拟收到消息，正式环境注释掉
+            // setInterval(function () {
+            //     $('#history').append('<p class="msg2">我不在，有事请留言</p>');
+            //     msg_end.scrollIntoView();
+            // }, 1000);
+
+            websocket.onmessage = function (event) {
+                var msg = JSON.parse(event.data);
+                $('#history').append('<p class="msg2">'+msg.message+'</p>');
+                msg_end.scrollIntoView();
+            }
+
+            $('#send').focus().keypress(function (event) {
+                var keynum = (event.keyCode ? event.keyCode : event.which);
+                if (keynum == '13' && $(this).val() != '') {
+                    $('#history').append('<p class="msg1">' + $(this).val() + '</p>');
+                    websocket.send(JSON.stringify({
+                        'receiverId': getParam('r'), //优先级1
+                        'tripId': getParam('t'), //优先级2，如果1没有，按这个查出当前receiver
+                        'message': $(this).val()
+                    })); //websocket发送消息
+                    $(this).val('');
+                    //消息滚动到底部
+                    msg_end.scrollIntoView();
+                }
+            });
+        })
+
+
+
+    </script>
+</head>
+
+<body>
+
+    <div data-role="page" id="pageone">
+        <div data-role="header" data-position="fixed" data-tap-toggle="false">
+            <a href="#" data-rel="back"
+                class="ui-btn ui-btn-inline ui-icon-arrow-l ui-btn-icon-notext ui-corner-all">使用圆圈（默认）</a>
+            <h1>即时消息</h1>
+        </div>
+
+        <div data-role="content">
+            <div id="history"></div>
+        </div>
+        <div id="msg_end"></div>
+        <div data-role="footer" data-position="fixed" data-tap-toggle="false">
+            <div style="margin:0px 5px"><input id="send"></div>
+        </div>
+    </div>
+
+</body>
+
+</html>

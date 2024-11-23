@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>o2o顺风车</title>
+    <title>黑马顺风车</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="../css/jquery.mobile-1.4.5.min.css">
@@ -28,40 +28,48 @@
             height: 100%;
             max-height: 180px;
         }
-        .ui-icon-carat-r {
-            line-height:20px;
-        }
     </style>
     <script>
         $(function () {
-
             $('.person-img').attr('src',current_user.avatar);
             $('#driverName').text((current_user.useralias == '') ? current_user.username : current_user.useralias);
             $('#valid').text((current_user.status == 1) ? '已完成' : '未完成');
             $('#driver').text((current_user.role == 1) ? '已完成' : '未完成');
 
-            var roleName = (localStorage.getItem('current_role') == '0' ? 'user' : 'driver');
-            $('.role').each(function(){
-                $(this).attr('href','../'+roleName+'/'+$(this).attr('href'));
-            });
             $('li').removeClass('ui-first-child');
+
+            var roleName = (localStorage.getItem('current_role') == '0' ? 'user' : 'driver');
+            $('.role').each(function () {
+                $(this).attr('href', '../' + roleName + '/' + $(this).attr('href'));
+            });
+
+
+
         })
-        function logout() {
-            localStorage.clear();
-            //localStorage.removeItem('SESSION_TOKEN_KEY'); //退出不清空其他信息，那么其他人登录会串，但是能保留聊天数据等信息
-            toUrl('/web/login.html');
+        function pwdBtn() {
+            if($('#pwd1').val() != $('#pwd2').val()){
+                showMsg('两次密码不一致');
+                return;
+            }
+            $.postForm('/account/api/modifyPassword', '#pwdForm', function (d) {
+                showMsg(d.message);
+                if(d.code == 200){
+                    localStorage.clear();
+                    toUrl('/web/login.html',1000)
+                }
+            })
         }
+
     </script>
 </head>
 
 <body>
-    <div id="template" style="display: none;">
-        
-    </div>
 
     <div data-role="page" id="pageone">
         <div data-role="header" data-position="fixed" data-tap-toggle="false">
-            <h1>个人中心</h1>
+            <a href="#" data-rel="back"
+                class="ui-btn ui-btn-inline ui-icon-arrow-l ui-btn-icon-notext ui-corner-all">使用圆圈（默认）</a>
+            <h1>修改密码</h1>
         </div>
         <ul data-role="listview" data-inset="true" id="defaultpanel" style="margin:15px;">
             <li>
@@ -71,40 +79,34 @@
                         style="width:70px;height:70px;margin-top:25px;margin-left:10px;">
                     <h2 id="driverName" id="useralias"></h2>
                     <p></p>
-                    <p><span>实名认证：</span> <span style="color:darkgoldenrod" id="valid">未完成</span></p>
+                    <p><span>实名认证：</span> <span style="color:darkgoldenrod" id="valid"></span></p>
                     <p></p>
-                    <p><span>车主认证：</span> <span style="color:darkgoldenrod" id="driver">已完成</span></p>
+                    <p><span>车主认证：</span> <span style="color:darkgoldenrod" id="driver"></span></p>
                 </a>
             </li>
             <li>
-                <a data-ajax="false" href="javascript:toUrl('alterPwd.html')">修改密码</a>
-            </li>
-            <li>
-                <a data-ajax="false" href="javascript:toUrl('alterPhoto.html')">修改头像</a>
-            </li>
-            <li>
-                <a data-ajax="false" href="javascript:toUrl('alterPaycode.html')">收款码</a>
-            </li>
-            <li>
-                <a data-ajax="false" href="javascript:toUrl('userEdit.html')">完善资料</a>
-            </li>
-            <li>
-                <a data-ajax="false" href="javascript:toUrl('carInfo.html')">车辆信息</a>
-            </li>
-            <li>
-                <a data-ajax="false" href="javascript:toUrl('userVerify.html')">实名认证</a>
-            </li>
-            <li>
-                <a data-ajax="false" href="javascript:toUrl('carVerify.html')">车主认证</a>
-            </li>
-            <li>
-                <a data-ajax="false" href="javascript:toUrl('accountInfo.html')">行程统计</a>
-            </li>
-            <li>
-                <a data-ajax="false" href="javascript:toUrl('userMsg.html')">我的消息</a>
-            </li>
-            <li>
-                <a data-ajax="false" href="javascript:logout();">退出登录</a>
+                <form id="pwdForm">
+                    <table>
+    
+                        <tr>
+                            <td class="h">输入旧密码：</td>
+                            <td><input type="password" name="password"></td>
+                        </tr>
+                        <tr>
+                            <td class="h">请输入新密码：</td>
+                            <td><input type="password" name="newPassword" id="pwd1"></td>
+                        </tr>
+                        <tr>
+                            <td class="h">再输一遍：</td>
+                            <td><input type="password" id="pwd2"></td>
+                        </tr>
+    
+                        <tr>
+                            <td class="h"></td>
+                            <td><button type="button" class="ui-btn-active" onclick="pwdBtn()">提交</button></td>
+                        </tr>
+                    </table>
+                </form>
             </li>
         </ul>
         <div data-role="footer" data-position="fixed" data-tap-toggle="false">
@@ -117,7 +119,6 @@
                 </ul>
             </div>
         </div>
-
     </div>
 
 </body>
