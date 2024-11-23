@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.heima.storage.mapper.AuthenticationMapper">
-    <resultMap id="BaseResultMap" type="com.heima.modules.po.AuthenticationPO">
+    <resultMap id="BaseResultMap" type="com.yian.modules.po.AuthenticationPO">
         <id column="id" jdbcType="VARCHAR" property="id"/>
         <result column="useralias" jdbcType="VARCHAR" property="useralias"/>
         <result column="phone" jdbcType="VARCHAR" property="phone"/>
@@ -40,7 +40,7 @@
     delete from t_authentication
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-    <insert id="insert" parameterType="com.heima.modules.po.AuthenticationPO">
+    <insert id="insert" parameterType="com.yian.modules.po.AuthenticationPO">
         insert into t_authentication (id,useralias, phone, birth,
         personal_photo, card_id, card_id_front_photo,
         card_id_back_photo, status, REVISION,
@@ -52,7 +52,7 @@
         #{createdBy,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP}, #{updatedBy,jdbcType=VARCHAR},
         #{updatedTime,jdbcType=TIMESTAMP})
     </insert>
-    <insert id="insertSelective" parameterType="com.heima.modules.po.AuthenticationPO">
+    <insert id="insertSelective" parameterType="com.yian.modules.po.AuthenticationPO">
         insert into t_authentication
         <trim prefix="(" suffix=")" suffixOverrides=",">
             id,
@@ -139,7 +139,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="com.heima.modules.po.AuthenticationPO">
+    <update id="updateByPrimaryKeySelective" parameterType="com.yian.modules.po.AuthenticationPO">
         update t_authentication
         <set>
             <if test="useralias != null">
@@ -184,7 +184,7 @@
         </set>
         where id = #{id,jdbcType=VARCHAR}
     </update>
-    <update id="updateByPrimaryKey" parameterType="com.heima.modules.po.AuthenticationPO">
+    <update id="updateByPrimaryKey" parameterType="com.yian.modules.po.AuthenticationPO">
     update t_authentication
     set useralias = #{useralias,jdbcType=VARCHAR},
       phone = #{phone,jdbcType=VARCHAR},

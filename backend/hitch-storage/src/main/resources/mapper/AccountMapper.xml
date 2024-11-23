@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.heima.storage.mapper.AccountMapper">
-    <resultMap id="BaseResultMap" type="com.heima.modules.po.AccountPO">
+    <resultMap id="BaseResultMap" type="com.yian.modules.po.AccountPO">
         <id column="id" jdbcType="VARCHAR" property="id"/>
         <result column="username" jdbcType="VARCHAR" property="username"/>
         <result column="useralias" jdbcType="VARCHAR" property="useralias"/>
@@ -28,7 +28,7 @@
         where id = #{id,jdbcType=VARCHAR}
     </select>
 
-    <select id="checkLogin" parameterType="com.heima.modules.po.AccountPO" resultMap="BaseResultMap">
+    <select id="checkLogin" parameterType="com.yian.modules.po.AccountPO" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from t_account
@@ -47,7 +47,7 @@
     delete from t_account
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-    <insert id="insert" parameterType="com.heima.modules.po.AccountPO">
+    <insert id="insert" parameterType="com.yian.modules.po.AccountPO">
         insert IGNORE into t_account (id,username, useralias, password,
         phone, role, avatar,paycode,
         status, REVISION,
@@ -59,7 +59,7 @@
         #{createdBy,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP}, #{updatedBy,jdbcType=VARCHAR},
         #{updatedTime,jdbcType=TIMESTAMP})
     </insert>
-    <insert id="insertSelective" parameterType="com.heima.modules.po.AccountPO">
+    <insert id="insertSelective" parameterType="com.yian.modules.po.AccountPO">
         insert IGNORE into t_account
 
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -147,7 +147,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="com.heima.modules.po.AccountPO">
+    <update id="updateByPrimaryKeySelective" parameterType="com.yian.modules.po.AccountPO">
         update t_account
         <set>
             <if test="username != null">
@@ -192,7 +192,7 @@
         </set>
         where id = #{id,jdbcType=VARCHAR}
     </update>
-    <update id="updateByPrimaryKey" parameterType="com.heima.modules.po.AccountPO">
+    <update id="updateByPrimaryKey" parameterType="com.yian.modules.po.AccountPO">
     update t_account
     set username = #{username,jdbcType=VARCHAR},
       useralias = #{useralias,jdbcType=VARCHAR},

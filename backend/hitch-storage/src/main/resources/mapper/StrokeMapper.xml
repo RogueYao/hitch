@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.heima.storage.mapper.StrokeMapper">
-    <resultMap id="BaseResultMap" type="com.heima.modules.po.StrokePO">
+    <resultMap id="BaseResultMap" type="com.yian.modules.po.StrokePO">
         <id column="id" jdbcType="VARCHAR" property="id"/>
         <result column="publisher_id" jdbcType="VARCHAR" property="publisherId"/>
         <result column="role" jdbcType="TINYINT" property="role"/>
@@ -32,7 +32,7 @@
         where id = #{id,jdbcType=VARCHAR}
     </select>
 
-    <select id="selectList" parameterType="com.heima.modules.po.StrokePO" resultMap="BaseResultMap">
+    <select id="selectList" parameterType="com.yian.modules.po.StrokePO" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from t_stroke
@@ -61,7 +61,7 @@
         </where>
         order by departure_time desc
     </select>
-    <select id="selectByPublishId" resultType="com.heima.modules.po.StrokePO" >
+    <select id="selectByPublishId" resultType="com.yian.modules.po.StrokePO" >
         select
         <include refid="Base_Column_List"></include>
         from t_stroke
@@ -73,7 +73,7 @@
     delete from t_stroke
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-    <insert id="insert" parameterType="com.heima.modules.po.StrokePO">
+    <insert id="insert" parameterType="com.yian.modules.po.StrokePO">
     insert into t_stroke (id,publisher_id, role,
       start_geo_lng,start_geo_lat,start_addr, end_geo_lng,end_geo_lat, end_addr,
       quantity, departure_time, quick_confirm, 
@@ -87,7 +87,7 @@
       #{createdTime,jdbcType=TIMESTAMP}, #{updatedBy,jdbcType=VARCHAR}, #{updatedTime,jdbcType=TIMESTAMP}
       )
   </insert>
-    <insert id="insertSelective" parameterType="com.heima.modules.po.StrokePO">
+    <insert id="insertSelective" parameterType="com.yian.modules.po.StrokePO">
         insert into t_stroke
         <trim prefix="(" suffix=")" suffixOverrides=",">
             id,
@@ -198,7 +198,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="com.heima.modules.po.StrokePO">
+    <update id="updateByPrimaryKeySelective" parameterType="com.yian.modules.po.StrokePO">
         update t_stroke
         <set>
             <if test="publisherId != null">
@@ -257,7 +257,7 @@
         </set>
         where id = #{id,jdbcType=VARCHAR}
     </update>
-    <update id="updateByPrimaryKey" parameterType="com.heima.modules.po.StrokePO">
+    <update id="updateByPrimaryKey" parameterType="com.yian.modules.po.StrokePO">
     update t_stroke
     set publisher_id = #{publisherId,jdbcType=VARCHAR},
       role = #{role,jdbcType=TINYINT},

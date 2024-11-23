@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.heima.storage.mapper.VehicleMapper">
-    <resultMap id="BaseResultMap" type="com.heima.modules.po.VehiclePO">
+    <resultMap id="BaseResultMap" type="com.yian.modules.po.VehiclePO">
         <id column="id" jdbcType="VARCHAR" property="id"/>
         <result column="car_number" jdbcType="VARCHAR" property="carNumber"/>
         <result column="car_front_photo" jdbcType="VARCHAR" property="carFrontPhoto"/>
@@ -37,7 +37,7 @@
 
 
 
-    <select id="selectList" parameterType="com.heima.modules.po.VehiclePO" resultMap="BaseResultMap">
+    <select id="selectList" parameterType="com.yian.modules.po.VehiclePO" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from t_vehicle
@@ -71,7 +71,7 @@
     delete from t_vehicle
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-    <insert id="insert" parameterType="com.heima.modules.po.VehiclePO">
+    <insert id="insert" parameterType="com.yian.modules.po.VehiclePO">
         insert into t_vehicle (id,car_number, car_front_photo, car_back_photo,
         car_side_photo, purchase_date, phone,
         status, REVISION, CREATED_BY,
@@ -83,7 +83,7 @@
         #{createdTime,jdbcType=TIMESTAMP}, #{updatedBy,jdbcType=VARCHAR}, #{updatedTime,jdbcType=TIMESTAMP}
         )
     </insert>
-    <insert id="insertSelective" parameterType="com.heima.modules.po.VehiclePO">
+    <insert id="insertSelective" parameterType="com.yian.modules.po.VehiclePO">
         insert into t_vehicle
         <trim prefix="(" suffix=")" suffixOverrides=",">
             id,
@@ -164,7 +164,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="com.heima.modules.po.VehiclePO">
+    <update id="updateByPrimaryKeySelective" parameterType="com.yian.modules.po.VehiclePO">
         update t_vehicle
         <set>
             <if test="carNumber != null">
@@ -206,7 +206,7 @@
         </set>
         where id = #{id,jdbcType=VARCHAR}
     </update>
-    <update id="updateByPrimaryKey" parameterType="com.heima.modules.po.VehiclePO">
+    <update id="updateByPrimaryKey" parameterType="com.yian.modules.po.VehiclePO">
     update t_vehicle
     set car_number = #{carNumber,jdbcType=VARCHAR},
       car_front_photo = #{carFrontPhoto,jdbcType=VARCHAR},
