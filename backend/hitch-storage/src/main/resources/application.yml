@@ -64,6 +64,6 @@ minio:
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml
-  type-aliases-package: com.heima.modules.po
+  type-aliases-package: com.yian.modules.po
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

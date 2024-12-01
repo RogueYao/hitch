@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.heima.storage.mapper.VehicleMapper">
+<mapper namespace="com.yian.storage.mapper.VehicleMapper">
     <resultMap id="BaseResultMap" type="com.yian.modules.po.VehiclePO">
         <id column="id" jdbcType="VARCHAR" property="id"/>
         <result column="car_number" jdbcType="VARCHAR" property="carNumber"/>

@@ -255,7 +255,7 @@ public class AccountHandler {
         VehiclePO vehiclePO = getVehiclePO(accountPO);
         try {
             //TODO:任务2.1-车辆信息验证入口-2day
-            String license = aiHelper.getLicense(vehiclePO);
+            String license = aiHelper.getOwnerAuth(vehiclePO);
             vehiclePO.setCarNumber(license);
             accountPO.setRole(1);
             accountAPIService.update(accountPO);

@@ -1,7 +1,9 @@
 package com.yian.commons.constant;
 
 public interface HtichConstants {
+
     //账户相关服务
+    String ACCESS_TOKEN = "ACCESS_TOKEN_";
     String SESSION_TOKEN_KEY = "SESSION_TOKEN_KEY";
     String HEADER_ACCOUNT_KEY = "X_ACCOUNT_KEY";
     String SESSION_TOKEN_PREFIX = "SESSION_TOKEN_";
@@ -40,7 +42,7 @@ public interface HtichConstants {
 
     String BAIDU_AI_RESULT = "BAIDU_AI_RESULT";
 
-    String IMAGE_SERVER_ADDR = "http://portal-hongbaoyu-java.itheima.net";
+    String IMAGE_SERVER_ADDR = "http://portal-hongbaoyu-java.duain.top";
 
 
     static String getImageUrl(String imageUrl) {

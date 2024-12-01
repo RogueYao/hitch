@@ -11,7 +11,9 @@ spring:
         min-idle: 0
 
 baidu:
+  # 文字识别-key，一般不需修改
   apikey: N2wQVstcLgMxND4C2xmdYJyn
   secretkey: 7M2clFA8VKCGhCQMrKhLfhLX3Sqn6ToW
+  # 车牌识别接口
   vehiclelicense_url: https://aip.baidubce.com/rest/2.0/ocr/v1/vehicle_license
   licenseplate_url: https://aip.baidubce.com/rest/2.0/ocr/v1/license_plate
