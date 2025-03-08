@@ -134,7 +134,6 @@ public class StrokeHandler {
         return ResponseVO.success(strokeVOS);
     }
 
-
     /**
      * 顺风车邀请
      *

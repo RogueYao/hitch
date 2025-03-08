@@ -1,50 +1,41 @@
 package com.yian.account.handler;
 
 import com.alibaba.fastjson.JSON;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.yian.commons.constant.HtichConstants;
 import com.yian.commons.enums.BusinessErrors;
 import com.yian.commons.exception.BusinessRuntimeException;
 import com.yian.commons.utils.baidu.Base64Util;
 import com.yian.commons.utils.baidu.FileUtil;
 import com.yian.commons.utils.baidu.HttpUtil;
 import com.yian.modules.po.VehiclePO;
-import com.yian.modules.vo.license.LicensePlate;
 import okhttp3.*;
 import org.apache.commons.io.FileUtils;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.concurrent.TimeUnit;
 
 @Component
 public class AiHelper {
-    @Value("${baidu.apikey}")
-    private static String API_KEY;
-    @Value("${baidu.secretkey}")
-    private static String SECRET_KEY;
-    // private String API_KEY="N2wQVstcLgMxND4C2xmdYJyn";
-    // private String SECRET_KEY="7M2clFA8VKCGhCQMrKhLfhLX3Sqn6ToW";
+    // @Value("${baidu.apikey}")
+    // private static String API_KEY;
+    // @Value("${baidu.secretkey}")
+    // private static String SECRET_KEY;
+    private String API_KEY="N2wQVstcLgMxND4C2xmdYJyn";
+    private String SECRET_KEY="7M2clFA8VKCGhCQMrKhLfhLX3Sqn6ToW";
     @Value("${baidu.vehiclelicense_url}")
     private String VEHICLELICENSE_URL;
     @Value("${baidu.licenseplate_url}")
     private String LICENSEPLATE_URL;
     // private String LICENSEPLATE_URL ="https://aip.baidubce.com/rest/2.0/ocr/v1/license_plate";
     private final static Logger logger = LoggerFactory.getLogger(AiHelper.class);
-    @Resource
-    private RedisTemplate<String, String> redisTemplate;
-    protected static String accessToken="";
+    // @Resource
+    // private RedisHelper redisHelper;
+    protected static String accessToken="24.6105643ffc76438563e4a0107aff9947.2592000.1744010072.282335-95848044";
     final static OkHttpClient HTTP_CLIENT = new OkHttpClient().newBuilder().build();
 
 
@@ -101,10 +92,10 @@ public class AiHelper {
         String carBackPhoto = vehiclePO.getCarBackPhoto();
         File licenseFile = new File(
                 AiHelper.class.getResource("/").getPath() +
-                        "front-" + vehiclePO.getId() + carFrontPhoto.substring(carFrontPhoto.lastIndexOf("."), carFrontPhoto.length()));
+                        "front-" + vehiclePO.getId() + carBackPhoto.substring(carBackPhoto.lastIndexOf("."), carBackPhoto.length()));
 
         logger.info("licenseFile:{}", licenseFile.getAbsolutePath());
-        FileUtils.copyURLToFile(new URL(carFrontPhoto), licenseFile);
+        FileUtils.copyURLToFile(new URL(carBackPhoto), licenseFile);
         String licenseNumber = getVehicleLicenseNum(licenseFile.getAbsolutePath());
         if (licenseFile.exists()){
             licenseFile.delete();
@@ -136,15 +127,19 @@ public class AiHelper {
             // String accessToken = "24.d8d5e74d1f31dc2b1172137cfb3bb039.2592000.1725694857.282335-95848044";
             // 注意这里仅为了简化编码每一次请求都去获取access_token，线上环境access_token有过期时间， 客户端可自行缓存，过期后重新获取。
             if (accessToken==null|| accessToken.isEmpty()){
-                getAccessToken();
+                accessToken=getAccessToken();
             }
             String response = HttpUtil.post(VEHICLELICENSE_URL, accessToken, param);
+            logger.info("accessToken:{},response:{}", accessToken,response);
             String errorCode = JSON.parseObject(response).getString("error_code");
             if ("110".equals(errorCode)){
-                getAccessToken();
+                accessToken=getAccessToken();
                 return getVehicleLicenseNum(imgPath);
             }
-            String number = JSON.parseObject(response).getString("Number");
+            String number= JSON.parseObject(response)
+                    .getJSONObject("words_result")
+                    .getJSONObject("号牌号码")
+                    .getString("words");
             logger.info("获取行驶证号码accessToken:{},response:{}", accessToken,number);
             return number;
         } catch (Exception e) {
@@ -169,15 +164,18 @@ public class AiHelper {
             // String accessToken = "24.d8d5e74d1f31dc2b1172137cfb3bb039.2592000.1725694857.282335-95848044";
             // 注意这里仅为了简化编码每一次请求都去获取access_token，线上环境access_token有过期时间， 客户端可自行缓存，过期后重新获取。
             if (accessToken==null|| accessToken.isEmpty()){
-                getAccessToken();
+                accessToken=getAccessToken();
             }
             String response = HttpUtil.post(LICENSEPLATE_URL, accessToken, param);
             String errorCode = JSON.parseObject(response).getString("error_code");
             if ("110".equals(errorCode)){
-                getAccessToken();
+                accessToken=getAccessToken();
                 return getLicensePlateNum(imgPath);
             }
-            String number = JSON.parseObject(response).getString("Number");
+            String number= JSON.parseObject(response)
+                    .getJSONObject("words_result")
+                    .getString("number");
+
             logger.info("获取车牌号码 accessToken:{},response:{}", accessToken,number);
 
             return number;
@@ -220,12 +218,12 @@ public class AiHelper {
      */
     private String getAccessToken() throws IOException {
         // 从缓存中获取access_token
-        String accessToken = redisTemplate.opsForValue().get(HtichConstants.ACCESS_TOKEN);
-        if (accessToken!=null){
-            logger.info("accessToken:{}", accessToken);
-            AiHelper.accessToken = accessToken;
-            return accessToken;
-        }
+        // String accessToken = redisHelper.getObject(HtichConstants.ACCESS_TOKEN,"", String.class);
+        // if (accessToken!=null){
+        //     logger.info("accessToken:{}", accessToken);
+        //     AiHelper.accessToken = accessToken;
+        //     return accessToken;
+        // }
         // 从外部获取access_token
         MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
         RequestBody body = RequestBody.create(mediaType, "grant_type=client_credentials&client_id=" + API_KEY
@@ -237,12 +235,13 @@ public class AiHelper {
                 .build();
         Response response = HTTP_CLIENT.newCall(request).execute();
         if (200!=response.code()){
+            logger.info(String.valueOf(response.body()));
             throw new BusinessRuntimeException(BusinessErrors.AUTHENTICATION_ERROR,"更新access_token失败");
         }
         String updateAccessToken = JSON.parseObject(response.body().string()).getString("access_token");
         // 更新redis 提前一天更新，避免token失效
-        redisTemplate.opsForValue().set(HtichConstants.ACCESS_TOKEN, updateAccessToken, (30-1)*24*60*60, TimeUnit.SECONDS);
-        AiHelper.accessToken = updateAccessToken;
+        // redisHelper.setObject(HtichConstants.ACCESS_TOKEN, updateAccessToken,TimeUnit.DAYS.toMillis(29));
+        // AiHelper.accessToken = updateAccessToken;
         logger.info("accessToken:{}", updateAccessToken);
         return updateAccessToken;
 

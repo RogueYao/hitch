@@ -3,7 +3,7 @@ package com.yian.commons.constant;
 public interface HtichConstants {
 
     //账户相关服务
-    String ACCESS_TOKEN = "ACCESS_TOKEN_";
+    String ACCESS_TOKEN = "ACCESS_TOKEN";
     String SESSION_TOKEN_KEY = "SESSION_TOKEN_KEY";
     String HEADER_ACCOUNT_KEY = "X_ACCOUNT_KEY";
     String SESSION_TOKEN_PREFIX = "SESSION_TOKEN_";
